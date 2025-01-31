@@ -1,0 +1,61 @@
+services:
+
+  pwordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: pdb
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+      WORDPRESS_TABLE_PREFIX: wpp_
+    #command: apt-get update && apt-get --assume-yes install git-all
+    volumes:
+      - pwordpress:/var/www/html
+      - ./dcpleaderboard-plugin:/var/www/html/wp-content/plugins/dcpleaderboard-plugin
+
+  pdb:
+    image: mysql:8.0.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - pdb:/var/lib/mysql
+
+  swordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8181:80
+    environment:
+      WORDPRESS_DB_HOST: sdb
+      WORDPRESS_DB_USER: exampleuser1
+      WORDPRESS_DB_PASSWORD: examplepass1
+      WORDPRESS_DB_NAME: exampledb1
+      WORDPRESS_TABLE_PREFIX: wps_
+    #command: apt-get update && apt-get --assume-yes install git-all
+    volumes:
+      - swordpress:/var/www/html
+      - ./dcpleaderboard-plugin:/var/www/html/wp-content/plugins/dcpleaderboard-plugin
+
+  sdb:
+    image: mysql:8.0.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb1
+      MYSQL_USER: exampleuser1
+      MYSQL_PASSWORD: examplepass1
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - sdb:/var/lib/mysql    
+
+volumes:
+  pwordpress:
+  pdb:
+  swordpress:
+  sdb:  
