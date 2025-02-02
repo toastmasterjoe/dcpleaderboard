@@ -46,7 +46,7 @@ function onMySubmitClick (event){
     event.preventDefault();
     showLoadingSpinner();
     fetch('https://torquemag.io/2021/06/custom-endpoint-rest-api/') // Replace with your endpoint
-    //implement custom end point https://torquemag.io/2021/06/custom-endpoint-rest-api/
+    //implement custom end point 
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

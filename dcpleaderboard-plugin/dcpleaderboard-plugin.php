@@ -15,7 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard_options_page.php'; 
+require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard_options.php'; 
+require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard_rest-api.php'; 
 
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {
