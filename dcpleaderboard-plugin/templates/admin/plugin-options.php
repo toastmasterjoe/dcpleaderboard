@@ -1,4 +1,6 @@
+<!--
 <script src="<?php echo plugins_url('js/remote.js', __FILE__ ); ?>"></script>
+-->
 <div>
   <?php screen_icon(); ?>
   <h2>DCP Leaderboard Settings</h2>

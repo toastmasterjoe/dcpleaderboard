@@ -42,11 +42,27 @@ function showLoadingSpinner() {
 
   
   alert("xkaboom");
+
 function onMySubmitClick (event){
     event.preventDefault();
     showLoadingSpinner();
-    fetch('https://torquemag.io/2021/06/custom-endpoint-rest-api/') // Replace with your endpoint
-    //implement custom end point 
+    const remote_script_params = window.remote_script_params;
+
+    if (!remote_script_params || !remote_script_params.nonce) {
+        console.error("Nonce not found. Make sure wp_localize_script is used correctly.");
+        return; // Stop execution if nonce is missing
+    }
+
+    const nonce = remote_script_params.nonce;
+
+    fetch(window.location.origin + '/wp-json/dcpleaderboard/v1/endpoint/admin/clubs', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': nonce,
+      },
+      credentials: 'include' // If needed for CORS and cookies
+    }) 
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
