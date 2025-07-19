@@ -24,7 +24,9 @@ require_once plugin_dir_path( __FILE__ ) . '/database_setup.php';
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {
     add_option( 'dcpleaderboard_export_url', 'https://dashboards.toastmasters.org/export.aspx?type=CSV&report=clubperformance~109~1/31/2025~~2024-2025');
-    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_export_url', 'dcpleaderboard_callback' );
+    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_export_url', 'dcpleaderboard_sanitize_callback' );
+    add_option( 'dcpleaderboard_division', 'A');
+    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );
 }
 add_action( 'admin_init', 'dcpleaderboard_register_settings' );
 

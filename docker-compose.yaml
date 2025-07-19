@@ -1,61 +1,68 @@
 services:
 
   pwordpress:
-    image: wordpress
-    restart: always
+    build: 
+      context: ./infrastructure/production/
+      dockerfile: prod.Dockerfile
     ports:
       - 8080:80
-    environment:
-      WORDPRESS_DB_HOST: pdb
-      WORDPRESS_DB_USER: exampleuser
-      WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledb
-      WORDPRESS_TABLE_PREFIX: wpp_
-    #command: apt-get update && apt-get --assume-yes install git-all
-    volumes:
-      - pwordpress:/var/www/html
-      - ./dcpleaderboard-plugin:/var/www/html/wp-content/plugins/dcpleaderboard-plugin
+    env_file: ./infrastructure/production/.prod.env
+    depends_on:
+      pdb:
+        condition: service_healthy
+    entrypoint: /bin/bash -c "/usr/bin/install_wp.sh"
+    
 
   pdb:
     image: mysql:8.0.22
+    container_name: pdb
+    hostname: pdb
     restart: always
+    ports:
+      - 4406:3306
     environment:
       MYSQL_DATABASE: exampledb
       MYSQL_USER: exampleuser
       MYSQL_PASSWORD: examplepass
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_ROOT_PASSWORD: 'examplerootpass'
     volumes:
       - pdb:/var/lib/mysql
+    healthcheck: # Optional but recommended: ensures DB is ready before WordPress starts
+      test: ["CMD", "mysqladmin", "ping", "-h", "pdb"]
+      timeout: 20s
+      retries: 10
 
   swordpress:
-    image: wordpress
-    restart: always
+    build: 
+      context: ./infrastructure/staging/
+      dockerfile: staging.Dockerfile
     ports:
       - 8181:80
-    environment:
-      WORDPRESS_DB_HOST: sdb
-      WORDPRESS_DB_USER: exampleuser1
-      WORDPRESS_DB_PASSWORD: examplepass1
-      WORDPRESS_DB_NAME: exampledb1
-      WORDPRESS_TABLE_PREFIX: wps_
-    #command: apt-get update && apt-get --assume-yes install git-all
-    volumes:
-      - swordpress:/var/www/html
-      - ./dcpleaderboard-plugin:/var/www/html/wp-content/plugins/dcpleaderboard-plugin
+    env_file: ./infrastructure/staging/.staging.env
+    depends_on:
+      sdb:
+        condition: service_healthy
+    entrypoint: /bin/bash -c "/usr/bin/install_wp.sh"
 
   sdb:
     image: mysql:8.0.22
+    container_name: sdb
+    hostname: sdb
     restart: always
+    ports:
+      - 5506:3306
     environment:
       MYSQL_DATABASE: exampledb1
       MYSQL_USER: exampleuser1
       MYSQL_PASSWORD: examplepass1
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_ROOT_PASSWORD: 'examplerootpass1'
     volumes:
-      - sdb:/var/lib/mysql    
+      - sdb:/var/lib/mysql  
+    healthcheck: # Optional but recommended: ensures DB is ready before WordPress starts
+      test: ["CMD", "mysqladmin", "ping", "-h", "sdb"]
+      timeout: 20s
+      retries: 10  
 
 volumes:
-  pwordpress:
   pdb:
-  swordpress:
   sdb:  

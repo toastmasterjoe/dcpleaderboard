@@ -43,6 +43,7 @@
         $url = build_dashboard_url_club_progress();
         $content = downloadRemoteFileAsStream($url);
         $result = processCsvString($content);
+        
         $data = array(
             'status' => 'success',
             'data' => $result,

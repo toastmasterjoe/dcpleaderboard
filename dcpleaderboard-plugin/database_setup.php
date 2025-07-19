@@ -1,14 +1,16 @@
 <?php
 
     function wp_dcpleaderboard_clubs_create_table() {
+        error_log(">>wp_dcpleaderboard_clubs_create_table");
         global $wpdb;
 
         $table_name = $wpdb->prfix . 'dcpleaderboard_clubs';
         $charset_collate = $wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE `dcpleaderboard_clubs` (
+        $sql = "CREATE TABLE $table_name (
             `id` mediumint(9) NOT NULL AUTO_INCREMENT,
             `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+            `score_achieved_at` datetime NOT NULL,
             `district` varchar(45) NOT NULL,
             `division` varchar(45) NOT NULL,
             `area` varchar(45) NOT NULL,
@@ -31,6 +33,7 @@
             `mem_dues_oct` int(11) NOT NULL,
             `mem_dues_apr` int(11) NOT NULL,
             `off_list_on_time` int(11) NOT NULL,
+            `ti_status` varchar(45) NOT NULL,
             PRIMARY KEY (`id`),
             UNIQUE KEY `club_number_UNIQUE` (`club_number`),
             UNIQUE KEY `id_UNIQUE` (`id`)
@@ -38,6 +41,9 @@
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+        if ($wpdb->last_error) {
+            error_log("Database  error: " . $wpdb->last_error);
+        }
     }
     register_activation_hook( __FILE__, 'wp_dcpleaderboard_clubs_create_table' );
 
@@ -49,8 +55,10 @@
         $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
     }
     
+    register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_clubs_delete_table' );
+
     //delete table on uninstall plugin
-    register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_clubs_delete_table' );
+    //register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_clubs_delete_table' );
 
       
       
