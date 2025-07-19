@@ -6,7 +6,7 @@
 
         $table_name = $wpdb->prfix . 'dcpleaderboard_clubs';
         $charset_collate = $wpdb->get_charset_collate();
-
+        error_log('Activation hook fired1!');
         $sql = "CREATE TABLE $table_name (
             `id` mediumint(9) NOT NULL AUTO_INCREMENT,
             `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -38,12 +38,13 @@
             UNIQUE KEY `club_number_UNIQUE` (`club_number`),
             UNIQUE KEY `id_UNIQUE` (`id`)
         ) $charset_collate;";
-
+        error_log('Activation hook fired2!');
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
         if ($wpdb->last_error) {
             error_log("Database  error: " . $wpdb->last_error);
         }
+        error_log('Activation hook fired3!');
     }
     register_activation_hook( __FILE__, 'wp_dcpleaderboard_clubs_create_table' );
 

@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+ini_set('display_errors', 1);
+
 define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __FILE__ ) ));
 
 require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard_options.php'; 
