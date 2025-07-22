@@ -37,7 +37,7 @@
   </form>
   <div>
     
-     <button id="my-submit" onclick="onMySubmitClick(event);">submit</button>
+     <button id="my-submit" onclick="onMySubmitClick(event);">Synchronize Club Data</button>
     
   </div>
 </div>

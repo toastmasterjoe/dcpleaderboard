@@ -17,6 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly to prevent direct access to the file.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 require_once plugin_dir_path( __FILE__ ) . 'clubs.php'; 
 
 
@@ -32,8 +37,8 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     // Define default attributes for the shortcode
     $atts = shortcode_atts(
         array(
-            'title' => 'Default Title',
-            'color' => 'blue',
+            'title' => 'DCP Leaderboard',
+            'color' => '#004165',
             'items_per_page' => 20,
         ),
         $atts,
@@ -96,13 +101,19 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
             }
         } else {
             //TODO replace with message to sync clubs
-            error_log("no clubs");
+            ?>
+            <tr>
+                    <td rowspan="6">Club data is missing, contact the adminsitrator to sycnhronize data from dashboard</td>
+            </tr>
+            <?php
         }
         ?>
             </tbody>
         </table>
     </div>
+    <div class="custom-table-pagination"><?=paginate_links( $pagination_args )?></div>
     <?php
     // Return the buffered content
     return ob_get_clean();
 }
+

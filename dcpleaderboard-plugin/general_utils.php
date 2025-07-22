@@ -17,6 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly to prevent direct access to the file.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 function processCsvString($csvString, $delimiter = ",", $enclosure = '"', $escape = "\\", $prefixIgnore = 'Month of') {
     $rows = [];
     
