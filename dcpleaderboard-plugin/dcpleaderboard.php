@@ -19,12 +19,18 @@ ini_set('display_errors', 1);
 
 define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __FILE__ ) ));
 
-require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard_options.php'; 
-require_once plugin_dir_path( __FILE__ ) . '/admin/dcpleaderboard-rest-api.php'; 
-require_once plugin_dir_path( __FILE__ ) . '/database_setup.php'; 
+//echo plugin_dir_path( __FILE__ ) . 'database_setup.php';
+require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard_options.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard-rest-api.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'database_setup.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'leaderboard_render.php'; 
+
+register_activation_hook( __FILE__ , 'wp_dcpleaderboard_clubs_create_table' );
+register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_clubs_delete_table' );
 
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {
+    error_log(">>dcpleaderboard_register_settings");
     add_option( 'dcpleaderboard_export_url', 'https://dashboards.toastmasters.org/export.aspx?type=CSV&report=clubperformance~109~1/31/2025~~2024-2025');
     register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_export_url', 'dcpleaderboard_sanitize_callback' );
     add_option( 'dcpleaderboard_division', 'A');
@@ -37,4 +43,9 @@ function dcpleaderboard_register_settings_page() {
 }
 add_action( 'admin_menu', 'dcpleaderboard_register_settings_page' );
 add_action( 'admin_enqueue_scripts', 'dcpleaderboard_enqueue_scripts' );
+
+function dcpleaderboard_content_shortcode_init() {
+    add_shortcode('dcpleaderboard_content', 'dcpleaderboard_content_shortcode_callback');
+}
+add_action('init', 'dcpleaderboard_content_shortcode_init');
 ?>

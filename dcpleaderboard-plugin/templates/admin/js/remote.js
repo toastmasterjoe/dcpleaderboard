@@ -40,9 +40,6 @@ function showLoadingSpinner() {
     }
   }
 
-  
-  alert("xkaboom");
-
 function onMySubmitClick (event){
     event.preventDefault();
     showLoadingSpinner();

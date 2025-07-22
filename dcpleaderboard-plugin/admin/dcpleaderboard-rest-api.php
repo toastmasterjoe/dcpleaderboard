@@ -1,6 +1,7 @@
 <?php
     require_once plugin_dir_path( __FILE__ ) . '/../toastmasters_util.php'; 
     require_once plugin_dir_path( __FILE__ ) . '/../general_utils.php'; 
+    require_once plugin_dir_path( __FILE__ ) . '/../clubs.php'; 
 
     $memoryStream = ''; 
 
@@ -48,7 +49,8 @@
             'status' => 'success',
             'data' => $result,
         );
-
+        $clubs = new Clubs();
+        $clubs->upsert_all_clubs($result);
         // Return the data as a REST response
         return rest_ensure_response( $data );
     }
