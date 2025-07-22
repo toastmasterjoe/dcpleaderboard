@@ -28,9 +28,8 @@
             return $rows;
         }
 
-        public function get_all_clubs_paged($items_per_page){
+        public function get_all_clubs_paged($items_per_page, $current_page){
             global $wpdb;
-            $current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
             $offset = ( $current_page - 1 ) * $items_per_page;
             $total_items = $wpdb->get_var( "SELECT count(id) FROM {$this->table_name}" );
             // Prepared statement (Highly recommended for security):

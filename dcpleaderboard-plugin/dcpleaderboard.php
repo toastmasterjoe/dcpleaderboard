@@ -48,4 +48,12 @@ function dcpleaderboard_content_shortcode_init() {
     add_shortcode('dcpleaderboard_content', 'dcpleaderboard_content_shortcode_callback');
 }
 add_action('init', 'dcpleaderboard_content_shortcode_init');
+
+function dcpleaderboard_plugin_enqueue_styles() {
+    wp_enqueue_style(
+        'dcpleaderboard-style', // Handle name
+        plugin_dir_url(__FILE__) . 'dcpleaderboard-styles.css' // Path to the file
+    );
+}
+add_action('wp_enqueue_scripts', 'dcpleaderboard_plugin_enqueue_styles');
 ?>

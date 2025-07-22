@@ -1,0 +1,92 @@
+/* Pagination Styling */
+.custom-table-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.custom-table-pagination .page-numbers {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
+  border-radius: 6px;
+  background-color: #A9B2B1; /* Cool Gray */
+  color: #004165; /* Loyal Blue */
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 65, 101, 0.08); /* subtle Loyal Blue shadow */
+}
+
+.custom-table-pagination .page-numbers:hover {
+  background-color: #F2DF74; /* Happy Yellow accent */
+  color: #772432; /* True Maroon text on hover */
+}
+
+.custom-table-pagination .page-numbers.current {
+  background-color: #004165; /* Loyal Blue */
+  color: #ffffff;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+/* Container Styling */
+.modern-table-container {
+  border: 1px solid #A9B2B1; /* Cool Gray border */
+  padding: 20px;
+  margin: 30px 0;
+  background-color: #F5F5F5; /* Fair Gray background */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 65, 101, 0.08); /* Toastmasters-style subtle depth */
+}
+
+/* Title Styling */
+.modern-table-container h3 {
+  font-size: 1.6em;
+  color: #004165; /* Loyal Blue */
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* Table Styling */
+.modern-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.95em;
+}
+
+/* Header Row */
+.modern-table-container thead {
+  background-color: #772432; /* True Maroon */
+  color: #ffffff;
+}
+
+.modern-table-container th {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+/* Table Body */
+.modern-table-container td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Row Hover */
+.modern-table-container tbody tr:hover {
+  background-color: #F2DF74; /* Happy Yellow highlight */
+}
+
+/* Zebra Striping */
+.modern-table-container tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Status Column Special Styling */
+.modern-table-container td:last-child {
+  font-weight: bold;
+  text-align: center;
+  color: #004165; /* Loyal Blue */
+}

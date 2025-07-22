@@ -1,6 +1,8 @@
 <?php
 
 require_once plugin_dir_path( __FILE__ ) . 'clubs.php'; 
+
+
 /**
  * Callback function for the `dcpleaderboard_content` shortcode.
  * This function generates the content that will be embedded.
@@ -15,23 +17,38 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
         array(
             'title' => 'Default Title',
             'color' => 'blue',
+            'items_per_page' => 20,
         ),
         $atts,
         'dcpleaderboard_content'
     );
 
     $clubsDriver = new Clubs();
-    $clubs=$clubsDriver->get_all_clubs();
+    
+    $current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
+    $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page);
     error_log(print_r($clubs,true));
 
     // Sanitize attributes for safe output
     $title = esc_html($atts['title']);
     $color = esc_attr($atts['color']); // Use esc_attr for HTML attributes
 
+    $pagination_args = array(
+    'base'      => add_query_arg( 'paged', '%#%' ),
+    'format'    => '',
+    'total'     => $clubs->pages,
+    'current'   => $current_page,
+    'prev_text' => __( '&laquo; Previous', 'text-domain' ),
+    'next_text' => __( 'Next &raquo;', 'text-domain' ),
+    );
+
+
     // Start output buffering to capture HTML
     ob_start();
     ?>
-    <div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">
+    <div class="custom-table-pagination"><?=paginate_links( $pagination_args )?></div>
+    <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
+    <div class="modern-table-container">    
         <h3 style="color: <?php echo $color; ?>;"><?php echo $title; ?></h3>
         <table>
             <thead>
@@ -47,16 +64,16 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
             <tbody>
             
         <?php
-        if(count($clubs) > 0){
-            for ($index = 0; $index < count($clubs); $index++) {
+        if(count($clubs->data) > 0){
+            for ($index = 0; $index < count($clubs->data); $index++) {
                 ?>
                 <tr>
-                    <td><?=$index?></td>
-                    <td><?=wp_kses_post($clubs[$index]->division) // Sanitize enclosed content?></td>
-                    <td><?=wp_kses_post($clubs[$index]->area)?></td>
-                    <td><?=wp_kses_post($clubs[$index]->club_name)?></td>
-                    <td><?=wp_kses_post($clubs[$index]->goals_met)?></td>
-                    <td><?=wp_kses_post($clubs[$index]->ti_status)?></td>
+                    <td><?= ($index + 1) + ($current_page - 1) * $atts['items_per_page'] ?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->division) // Sanitize enclosed content?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->area)?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->club_name)?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->goals_met)?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->ti_status)?></td>
                 </tr>    
             <?php    
             }
