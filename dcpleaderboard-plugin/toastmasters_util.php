@@ -18,6 +18,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Exit if accessed directly to prevent direct access to the file.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 function get_report_date() {
     return date('n/d/Y', strtotime('-1 day'));
 }
