@@ -27,11 +27,30 @@ class Clubs {
         global $wpdb;
         $this->table_name = $wpdb->prefix . 'dcpleaderboard_clubs'; // Replace with your table name
     }
+
+    public function get_divisions() {
+        global $wpdb;
+                 
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare( "SELECT distinct division FROM {$this->table_name}" );
+        $row = $wpdb->get_results( $sql, ARRAY_A ); 
+        return $row;
+    }
+
+    public function get_areas($division) {
+        global $wpdb;
+                 
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare( "SELECT distinct area FROM {$this->table_name} where division = %s", $division );
+        $row = $wpdb->get_results( $sql, ARRAY_A ); 
+        return $row;
+    }
+
     public function get_club_by_number($clubNumber){
         global $wpdb;
                  
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( 'SELECT * FROM '.$this->table_name.' WHERE club_number = %s', $clubNumber );
+        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE club_number = %s", $clubNumber );
         $row = $wpdb->get_row( $sql, ARRAY_A ); 
         return $row;
     }
@@ -43,12 +62,37 @@ class Clubs {
         $rows = $wpdb->get_results( $sql, OBJECT ); 
         return $rows;
     }
-    public function get_all_clubs_paged($items_per_page, $current_page){
+
+    public function get_all_clubs_paged($items_per_page, $current_page, $division, $area){
         global $wpdb;
         $offset = ( $current_page - 1 ) * $items_per_page;
-        $total_items = $wpdb->get_var( "SELECT count(id) FROM {$this->table_name}" );
+
+        // Build WHERE clause
+        $where = [];
+        $params = [];
+        
+        if ($division) {
+            $where[] = "division = %s";
+            $params[] = $division;
+        }
+        if ($area) {
+            $where[] = "area = %s";
+            $params[] = $area;
+        }
+        
+        $where_sql = '';
+        if (!empty($where)) {
+            $where_sql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        $count_sql = "SELECT count(id) FROM {$this->table_name} $where_sql";
+        $total_items = $wpdb->get_var( $wpdb->prepare($count_sql, ...$params) );
+
+        $data_sql ="SELECT * FROM {$this->table_name} $where_sql ORDER BY goals_met DESC, score_achieved_at ASC LIMIT %d OFFSET %d";
+        $params[] = $items_per_page;
+        $params[] = $offset;
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} ORDER BY goals_met DESC, score_achieved_at ASC LIMIT %d OFFSET %d",$items_per_page, $offset);
+        $sql = $wpdb->prepare($data_sql, ...$params);
         $rows = $wpdb->get_results( $sql, OBJECT ); 
         return (object)array (
             "pages" => ceil( $total_items / $items_per_page ), 

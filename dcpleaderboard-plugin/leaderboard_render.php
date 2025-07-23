@@ -47,28 +47,62 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 
     $clubsDriver = new Clubs();
     
+    // Handle filters
+    $division = isset($_GET['division']) ? sanitize_text_field($_GET['division']) : '';
+    $area = isset($_GET['area']) ? sanitize_text_field($_GET['area']) : '';
+
     $current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
-    $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page);
-    
+    $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page, $division, $area);
 
     // Sanitize attributes for safe output
     $title = esc_html($atts['title']);
     $color = esc_attr($atts['color']); // Use esc_attr for HTML attributes
 
     $pagination_args = array(
-    'base'      => add_query_arg( 'paged', '%#%' ),
-    'format'    => '',
-    'total'     => $clubs->pages,
-    'current'   => $current_page,
-    'prev_text' => __( '&laquo; Previous', 'text-domain' ),
-    'next_text' => __( 'Next &raquo;', 'text-domain' ),
+        'base'      => add_query_arg( 'paged', '%#%' ),
+        'format'    => '',
+        'total'     => $clubs->pages,
+        'current'   => $current_page,
+        'prev_text' => __( '&laquo; Previous', 'text-domain' ),
+        'next_text' => __( 'Next &raquo;', 'text-domain' ),
+        'add_args' => [
+            'division' => $division,
+            'area' => $area,
+        ],
     );
 
 
     // Start output buffering to capture HTML
     ob_start();
     ?>
-    <div class="custom-table-pagination"><?=paginate_links( $pagination_args )?></div>
+    <form id="division_area_filter" method="GET">
+        <div class="custom-table-pagination"><?=paginate_links( $pagination_args )?></div>
+        <div class="custom-table-filter">
+            <label for="division">Division:</label>
+            <select name="division" id="division" onchange="document.getElementById('division_area_filter').submit();">
+                <option value="">-- All Divisions --</option>
+                <?php
+                    $divisions_in_district = $clubsDriver->get_divisions();
+                    foreach ($divisions_in_district as $field => $this_division) {
+                        $division_name = $this_division['division'];
+                ?>
+                    <option value="<?=$division_name?>" <?php selected($division, $division_name); ?>><?=$division_name?></option>
+                <?php
+                    }
+                ?>
+            </select>
+
+            <label for="area">Area:</label>
+            <select name="area" id="area">
+                <option value="">-- All Areas --</option>
+                <option value="Urban" <?php selected($area, 'Urban'); ?>>Urban</option>
+                <option value="Rural" <?php selected($area, 'Rural'); ?>>Rural</option>
+            </select>
+
+            <input type="submit" value="Filter">
+        </div>
+    </form>
+    
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <h3 style="color: <?php echo $color; ?>;"><?php echo $title; ?></h3>
