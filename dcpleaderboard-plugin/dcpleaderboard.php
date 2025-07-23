@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: DCP Leaderboard
- * Plugin URI:  https://example.com/my-first-plugin/ 
+ * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
  * Version:     0.1.1
  * Author:      Joseph Galea
- * Author URI:  https://example.com/
+ * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
  * Text Domain: dcpleaderboard-plugin
  */
