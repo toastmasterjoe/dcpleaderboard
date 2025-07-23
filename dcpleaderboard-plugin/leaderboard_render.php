@@ -79,8 +79,9 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     <th>Division</th>
                     <th>Area</th>
                     <th>Club</th>
-                    <th>Goals</th>
                     <th>Status</th>
+                    <th>Goals</th>
+                    <th>-</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,8 +95,13 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     <td><?=wp_kses_post($clubs->data[$index]->division) // Sanitize enclosed content?></td>
                     <td><?=wp_kses_post($clubs->data[$index]->area)?></td>
                     <td><?=wp_kses_post($clubs->data[$index]->club_name)?></td>
-                    <td><?=wp_kses_post($clubs->data[$index]->goals_met)?></td>
                     <td><?=wp_kses_post($clubs->data[$index]->ti_status)?></td>
+                    <td><?=wp_kses_post($clubs->data[$index]->goals_met)?></td>
+                    <td>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: <?=$clubs->data[$index]->goals_met*10?>%;"></div>
+                        </div>
+                    </td>
                 </tr>    
             <?php    
             }

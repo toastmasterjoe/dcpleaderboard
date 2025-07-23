@@ -49,6 +49,8 @@
   pointer-events: none;
 }
 
+
+/**Table Styling**/
 /* Container Styling */
 .modern-table-container {
   border: 1px solid #A9B2B1; /* Cool Gray border */
@@ -111,4 +113,19 @@
   font-weight: bold;
   text-align: center;
   color: #004165; /* Loyal Blue */
+}
+
+/**goal progress bar styling**/
+.bar-container {
+  width: 100px;       /* fixed width for scaling */
+  height: 20px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: #006094; /* Green fill */
+  transition: width 0.3s ease;
 }
