@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     0.1.2
+ * Version:     0.2.0
  * Author:      Joseph Galea
  * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
