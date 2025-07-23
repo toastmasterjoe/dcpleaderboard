@@ -1,4 +1,9 @@
 FROM wordpress:6.8.2-php8.4-apache
+
+RUN apt-get update
+RUN apt-get install sudo -y
+RUN usermod -aG sudo www-data
+
 COPY my-php.ini /usr/local/etc/php/conf.d/memory.ini
 
 COPY ./.prod.env ./
@@ -17,6 +22,7 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 USER root
 RUN chmod u+x /usr/bin/install_wp.sh
 RUN wp core download --path=/var/www/html/ --allow-root 
+COPY ./plugins/wp-crontrol /var/www/html/wp-content/plugins/wp-crontrol
 
 USER www-data
 

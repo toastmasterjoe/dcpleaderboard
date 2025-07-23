@@ -26,7 +26,7 @@ function wp_dcpleaderboard_clubs_create_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'dcpleaderboard_clubs';
     $charset_collate = $wpdb->get_charset_collate();
-    $sql = "CREATE TABLE $table_name (
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
         `id` mediumint(9) NOT NULL AUTO_INCREMENT,
         `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
         `score_achieved_at` datetime NOT NULL,

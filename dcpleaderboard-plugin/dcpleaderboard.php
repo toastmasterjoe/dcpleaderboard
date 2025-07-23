@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://example.com/my-first-plugin/ 
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     0.1.0
+ * Version:     0.1.1
  * Author:      Joseph Galea
  * Author URI:  https://example.com/
  * License:     GPLv3 or later
@@ -41,10 +41,25 @@ define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __F
 require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard_options.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard-rest-api.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'database_setup.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard_cron.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard_render.php'; 
 
-register_activation_hook( __FILE__ , 'wp_dcpleaderboard_clubs_create_table' );
-register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_clubs_delete_table' );
+function wp_dcpleaderboard_activate(){
+    wp_dcpleaderboard_clubs_create_table();
+    wp_dcpleaderboard_cron_activation();
+}
+register_activation_hook( __FILE__ , 'wp_dcpleaderboard_activate' );
+
+function wp_dcpleaderboard_deactivate(){
+    wp_dcpleaderboard_cron_deactivation();
+}
+register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_deactivate' );
+
+function wp_dcpleaderboard_uninstall() {
+    wp_dcpleaderboard_clubs_delete_table();
+}
+register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
+
 
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {

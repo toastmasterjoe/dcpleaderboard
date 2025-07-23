@@ -62,6 +62,14 @@ function dashboard_sync_endpoint_callback(WP_REST_Request $request ) {
     // Get parameters from the request (if any)
     //$param1 = $request->get_param( 'param1' );
     // Perform your logic here (e.g., database queries, calculations, etc.)
+    $result = dashboard_sync();
+    return rest_ensure_response( $result );
+}
+
+function dashboard_sync() {
+    // Get parameters from the request (if any)
+    //$param1 = $request->get_param( 'param1' );
+    // Perform your logic here (e.g., database queries, calculations, etc.)
     $url = build_dashboard_url_club_progress();
     $content = downloadRemoteFileAsStream($url);
     $result = processCsvString($content);
@@ -73,7 +81,7 @@ function dashboard_sync_endpoint_callback(WP_REST_Request $request ) {
     $clubs = new Clubs();
     $clubs->upsert_all_clubs($result);
     // Return the data as a REST response
-    return rest_ensure_response( $data );
+    return $data;
 }
 
 /*function my_custom_endpoint_callback_with_id( WP_REST_Request $request ) {
@@ -131,8 +139,7 @@ function downloadRemoteFileAsStream($remoteUrl) {
     $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $contentLength = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 
-    curl_close($ch);    
-    error_log($memoryStream);    
+    curl_close($ch);       
     return $memoryStream;
 }
 

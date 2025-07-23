@@ -49,7 +49,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     
     $current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
     $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page);
-    error_log(print_r($clubs,true));
+    
 
     // Sanitize attributes for safe output
     $title = esc_html($atts['title']);
