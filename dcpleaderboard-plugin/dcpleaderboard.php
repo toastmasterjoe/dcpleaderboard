@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     0.2.0
+ * Version:     0.2.1
  * Author:      Joseph Galea
  * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
@@ -37,12 +37,14 @@ ini_set('display_errors', 1);
 
 define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __FILE__ ) ));
 
-//echo plugin_dir_path( __FILE__ ) . 'database_setup.php';
-require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard_options.php'; 
-require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard-rest-api.php'; 
-require_once plugin_dir_path( __FILE__ ) . 'database_setup.php'; 
-require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard_cron.php'; 
-require_once plugin_dir_path( __FILE__ ) . 'leaderboard_render.php'; 
+
+require_once plugin_dir_path( __FILE__ ) . 'admin/options_page_register.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'admin/ti-dashboard-sync-rest-api.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'admin/ti_dashboard-sync-cron.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'database-tables-setup.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
 
 function wp_dcpleaderboard_activate(){
     wp_dcpleaderboard_clubs_create_table();
@@ -78,6 +80,7 @@ add_action( 'admin_menu', 'dcpleaderboard_register_settings_page' );
 add_action( 'admin_enqueue_scripts', 'dcpleaderboard_enqueue_scripts' );
 
 function dcpleaderboard_content_shortcode_init() {
+    add_shortcode('dcpleaderboard_content_legacy', 'dcpleaderboard_content_legacy_shortcode_callback');
     add_shortcode('dcpleaderboard_content', 'dcpleaderboard_content_shortcode_callback');
 }
 add_action('init', 'dcpleaderboard_content_shortcode_init');

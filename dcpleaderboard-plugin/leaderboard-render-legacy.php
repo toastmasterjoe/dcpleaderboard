@@ -33,7 +33,7 @@ require_once plugin_dir_path( __FILE__ ) . 'clubs.php';
  * @param string $content Content enclosed within the shortcode tags (if any).
  * @return string The HTML content to display.
  */
-function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
+function dcpleaderboard_content_legacy_shortcode_callback($atts, $content = null) {
     // Define default attributes for the shortcode
     $atts = shortcode_atts(
         array(
@@ -51,7 +51,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     $division = isset($_GET['division']) ? sanitize_text_field($_GET['division']) : '';
     $area = isset($_GET['area']) ? sanitize_text_field($_GET['area']) : '';
 
-    $current_page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
+    $current_page = isset( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
     $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page, $division, $area);
 
     // Sanitize attributes for safe output
@@ -59,7 +59,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     $color = esc_attr($atts['color']); // Use esc_attr for HTML attributes
 
     $pagination_args = array(
-        'base'      => add_query_arg( 'paged', '%#%' ),
+        'base'      => add_query_arg( 'page', '%#%' ),
         'format'    => '',
         'total'     => $clubs->pages,
         'current'   => $current_page,
@@ -106,7 +106,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <h3 style="color: <?php echo $color; ?>;"><?php echo $title; ?></h3>
-        <table>
+        <table id="club_leaderboard">
             <thead>
                 <tr>
                     <th>Position</th>

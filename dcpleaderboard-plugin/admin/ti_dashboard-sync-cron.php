@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-require_once plugin_dir_path( __FILE__ ) . 'admin/dcpleaderboard-rest-api.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'ti-dashboard-sync.php'; 
 
 // Define the same hook name used for scheduling.
 Global $event_hook;
