@@ -77,7 +77,7 @@ function dcpleaderboard_register_settings_page() {
     add_options_page('DCP Leadearboard Settings', 'DCP Leaderboard - Settings', 'manage_options', 'dcpleaderboard', 'dcpleaderboard_options_page');
 }
 add_action( 'admin_menu', 'dcpleaderboard_register_settings_page' );
-add_action( 'admin_enqueue_scripts', 'dcpleaderboard_enqueue_scripts' );
+add_action( 'admin_enqueue_scripts', 'dcpleaderboard_admin_enqueue_scripts' );
 
 function dcpleaderboard_content_shortcode_init() {
     add_shortcode('dcpleaderboard_content_legacy', 'dcpleaderboard_content_legacy_shortcode_callback');
@@ -85,11 +85,17 @@ function dcpleaderboard_content_shortcode_init() {
 }
 add_action('init', 'dcpleaderboard_content_shortcode_init');
 
-function dcpleaderboard_plugin_enqueue_styles() {
+/*function dcpleaderboard_plugin_enqueue_styles() {
     wp_enqueue_style(
         'dcpleaderboard-style', // Handle name
         plugin_dir_url(__FILE__) . 'dcpleaderboard-styles.css' // Path to the file
     );
 }
-add_action('wp_enqueue_scripts', 'dcpleaderboard_plugin_enqueue_styles');
+add_action('wp_enqueue_scripts', 'dcpleaderboard_plugin_enqueue_styles');*/
+
+function dcpleaderboard_enqueue_scripts() {
+    wp_enqueue_script('jquery');
+    //wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'js/my-script.min.js', array('jquery'), null, true);
+}
+add_action('wp_enqueue_scripts', 'dcpleaderboard_enqueue_scripts');
 ?>

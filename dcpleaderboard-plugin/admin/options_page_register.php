@@ -33,7 +33,7 @@ function dcpleaderboard_options_page()
 //$csv = file_get_contents(get_option('dcpleaderboard_export_url'));
 } 
 
-function dcpleaderboard_enqueue_scripts() {
+function dcpleaderboard_admin_enqueue_scripts() {
   // 1. Enqueue your JavaScript file:
   wp_enqueue_script( 'remote_script',  PLUGIN_RELATIVE_PATH.'/templates/admin/js/remote.js', array(), null, true ); // 'true' puts the script in the footer
   // 2. Localize the data:

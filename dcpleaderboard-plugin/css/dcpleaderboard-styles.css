@@ -206,6 +206,13 @@ form input[type="submit"]:hover {
 }
 
 .progress-text {
-  font-size: 12px;
+  font-size: 0.95em;
   white-space: nowrap;
+}
+
+.promotion-marker {
+    display: inline-block;
+    width: 12px;       /* Fixed width */
+    text-align: right;  /* Align text to the right inside the span */
+    margin-right: 5px; /* Optional spacing between label and content */
 }

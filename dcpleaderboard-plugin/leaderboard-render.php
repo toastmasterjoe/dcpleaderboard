@@ -44,6 +44,46 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
         $atts,
         'dcpleaderboard_content'
     );
+    wp_enqueue_script('jquery');
+   
+    wp_enqueue_script(
+        'bootstrap', // handle
+        plugin_dir_url(__FILE__)  . '/js/bootstrap.bundle.min.js', // script path
+        array(), // dependencies
+        '5.3.7', // version
+        true // load in footer
+    );
+
+    wp_enqueue_script(
+        'datatables', // handle
+        plugin_dir_url(__FILE__)  . '/js/datatables.min.js', // script path
+        array('jquery', 'bootstrap'), // dependencies
+        '2.3.2', // version
+        true // load in footer
+    );
+
+     wp_enqueue_script(
+        'leaderboard-render', // handle
+        plugin_dir_url(__FILE__)  . '/js/leaderboard-render.js', // script path
+        array('jquery', 'bootstrap','datatables'), // dependencies
+        '1.0.0', // version
+        true // load in footer
+    );
+
+    wp_enqueue_style(
+        'bootstrap', // Handle name
+        plugin_dir_url(__FILE__) . '/css/bootstrap.min.css' // Path to the file
+    );
+
+    wp_enqueue_style(
+        'datatables', // Handle name
+        plugin_dir_url(__FILE__) . '/css/datatables.min.css' // Path to the file
+    );
+
+    wp_enqueue_style(
+        'dcpleaderboard-style', // Handle name
+        plugin_dir_url(__FILE__) . '/css/dcpleaderboard-styles.css' // Path to the file
+    );
 
     $clubsDriver = new Clubs();
     
@@ -62,18 +102,54 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     ob_start();
     ?>
 
-    
-
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
-  
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
-
 	<script type="text/javascript">
-		$(document).ready(function() {
+        function render_category(data, type, row){
+                            console.log(row.ti_status);
+                            var category = '';
+                            switch(data){
+                                case '':
+                                    category = 'D';
+                                    break;
+                                case 'D':
+                                    category = 'C';
+                                    break;
+                                case 'S':
+                                    category = 'B';
+                                    break;
+                                case 'P':
+                                    category = 'A';
+                                    break;
+                                default:
+                                    category = 'D';
+                                    break;
+                            }
+                            var newCategory = '';
+                            switch(row.ti_status){
+                                case '':
+                                    newCategory = 'D';
+                                    break;
+                                case 'D':
+                                    newCategory = 'C';
+                                    break;
+                                case 'S':
+                                    newCategory = 'B';
+                                    break;
+                                case 'P':
+                                    newCategory = 'A';
+                                    break;
+                                default:
+                                    newCategory = 'A';
+                                    break;
+                            }
+                            return `
+                            <div class="progress-cell">
+                                <div class="progress-text" >${( (newCategory < category) ?'<span class="promotion-marker">&#9650;</span>': '<span class="promotion-marker">&nbsp;</span>')}
+                                    Serie ${( (newCategory < category) ? newCategory : category )}
+                                </div>
+                            </div>
+                            `;
+                        }
+        jQuery(document).ready(function($) {
             $.ajax({
                 url: '<?=site_url().'/wp-json/dcpleaderboard/v1/divisions'?>',
                 success: function(data) {
@@ -89,7 +165,8 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                 searching: true,
 		      	processing: true,
 		      	serverSide: false,
-                ordering:false,
+                responsive: true,
+                ordering: false,
                 pageLength: 20,
                 lengthMenu: [10, 20, 50, 100],
 		      	serverMethod: 'get',
@@ -106,6 +183,57 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 		         	{ data: 'area' },
 		         	{ data: 'club_name' },
 		         	{ data: 'ti_status' },
+                    { data: 'ti_status_last_year',
+                        render: (data, type, row) => render_category(data, type, row)
+                        /*
+                        render: function(data, type, row){
+                            console.log(row.ti_status);
+                            var category = '';
+                            switch(data){
+                                case '':
+                                    category = 'D';
+                                    break;
+                                case 'D':
+                                    category = 'C';
+                                    break;
+                                case 'S':
+                                    category = 'B';
+                                    break;
+                                case 'P':
+                                    category = 'A';
+                                    break;
+                                default:
+                                    category = 'D';
+                                    break;
+                            }
+                            var newCategory = '';
+                            switch(row.ti_status){
+                                case '':
+                                    newCategory = 'D';
+                                    break;
+                                case 'D':
+                                    newCategory = 'C';
+                                    break;
+                                case 'S':
+                                    newCategory = 'B';
+                                    break;
+                                case 'P':
+                                    newCategory = 'A';
+                                    break;
+                                default:
+                                    newCategory = 'A';
+                                    break;
+                            }
+                            return `
+                            <div class="progress-cell">
+                                <div class="progress-text" >${( (newCategory < category) ?'<span class="promotion-marker">&#9650;</span>': '<span class="promotion-marker">&nbsp;</span>')}
+                                    Serie ${( (newCategory < category) ? newCategory : category )}
+                                </div>
+                            </div>
+                            `;
+                        }
+                            */
+                    },
                     { data: 'goals_met',
                         render: function(data, type, row) {
                         const goals = parseInt(data, 10);
@@ -210,7 +338,20 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     var newId = info.start + virtualRowIdx;
                     virtualRowIdx++;
                     // Update the first cell (the ID column) with the new ID
-                    $('td:eq(0)', rowNode).html(newId);
+                    switch (newId){
+                        case 1:
+                            $('td:eq(0)', rowNode).html(newId+'&nbsp;🥇');
+                            break;
+                        case 2:
+                            $('td:eq(0)', rowNode).html(newId+'&nbsp;🥈');
+                            break;
+                        case 3:
+                            $('td:eq(0)', rowNode).html(newId+'&nbsp;🥉');
+                            break;
+                        default:
+                            $('td:eq(0)', rowNode).html(newId);
+                            break;
+                    }
                 });
             });
            
@@ -244,6 +385,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     <th>Area</th>
                     <th>Club</th>
                     <th>Status</th>
+                    <th>Category</th>
                     <th>DCP Goals</th>
                     <!--<th>-</th>-->
                 </tr>
