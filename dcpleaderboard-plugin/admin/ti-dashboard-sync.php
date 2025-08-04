@@ -41,8 +41,23 @@ function dashboard_sync() {
     );
     $clubs = new Clubs();
     $clubs->upsert_all_clubs($result);
+    update_ti_status_last_year();
     // Return the data as a REST response
     return $data;
+}
+
+function update_ti_status_last_year() {
+     // Get parameters from the request (if any)
+    //$param1 = $request->get_param( 'param1' );
+    // Perform your logic here (e.g., database queries, calculations, etc.)
+    $url = build_dashboard_previous_year_url();
+    error_log($url);
+    $content = downloadRemoteFileAsStream($url);
+    error_log($content);
+    $result = processCsvString($content);
+    
+    $clubs = new Clubs();
+    $clubs->update_club_ti_status_last_year($result);
 }
 
 function downloadRemoteFileAsStream($remoteUrl) {

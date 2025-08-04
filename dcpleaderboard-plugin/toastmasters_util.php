@@ -27,6 +27,13 @@ function get_report_date() {
     return date('n/d/Y', strtotime('-1 day'));
 }
 
+function get_end_of_previous_year_date() {
+    $monthNumber = (int) date('n');//no leading zero
+    $currentYear = (int) date('Y');
+    
+    return sprintf("6/30/%04d",  $monthNumber < 7 ? $currentYear - 1 : $currentYear);
+}
+
 function get_programme_year() {
     $monthNumber = (int) date('n');//no leading zero
     $currentYear = (int) date('Y');
@@ -38,7 +45,22 @@ function get_programme_year() {
     } 
 }
 
+function get_previous_programme_year() {
+    $monthNumber = (int) date('n');//no leading zero
+    $currentYear = (int) date('Y');
+    if($monthNumber >= 7){
+        //Month is July new program year
+        return sprintf("%04d-%04d", $currentYear-1, $currentYear);
+    } else {
+        return sprintf("%04d-%04d", $currentYear-2, $currentYear-1);
+    } 
+}
+
 function build_dashboard_url_club_progress(){
-    return 'https://dashboards.toastmasters.org/export.aspx?type=CSV&report=clubperformance~109~'.get_report_date().'~~'.get_programme_year();
+    return 'https://dashboards.toastmasters.org/'.get_programme_year().'/export.aspx?type=CSV&report=clubperformance~109~'.get_report_date().'~~'.get_programme_year();
+}
+
+function build_dashboard_previous_year_url(){
+    return 'https://dashboards.toastmasters.org/'.get_previous_programme_year().'/export.aspx?type=CSV&report=clubperformance~109~'.get_end_of_previous_year_date().'~~'.get_previous_programme_year();
 }
 ?>

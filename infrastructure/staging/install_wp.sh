@@ -5,7 +5,7 @@ wp core install --url="$WORDPRESS_URL" --title="$WORDPRESS_TITLE" --admin_user="
 
 sudo iptables -t nat -A PREROUTING -p tcp --dport 8181 -j REDIRECT --to-port 80
 sudo iptables -t nat -A OUTPUT -p tcp -o lo --dport 8181 -j REDIRECT --to-port 80
-sudo iptables-save > /etc/iptables/rules.v4
+sudo bash -c "iptables-save > /etc/iptables/rules.v4"
 
 /usr/local/bin/docker-entrypoint.sh apache2-foreground
 exec "$@"

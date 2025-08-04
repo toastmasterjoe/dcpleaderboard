@@ -36,8 +36,10 @@ function wp_dcpleaderboard_clubs_create_table() {
         `club_number` varchar(45) NOT NULL,
         `club_name` varchar(255) NOT NULL,
         `club_status` varchar(45) NOT NULL,
+        `csp` varchar(10) NOT NULL,
         `mem_base` int(11) NOT NULL,
         `active_members` int(11) NOT NULL,
+        `net_growth` int(11) NOT NULL,
         `goals_met` int(11) NOT NULL,
         `level_1` int(11) NOT NULL,
         `level_2` int(11) NOT NULL,
@@ -53,6 +55,7 @@ function wp_dcpleaderboard_clubs_create_table() {
         `mem_dues_apr` int(11) NOT NULL,
         `off_list_on_time` int(11) NOT NULL,
         `ti_status` varchar(45) NOT NULL,
+        `ti_status_last_year` varchar(45) NOT NULL DEFAULT '',
         PRIMARY KEY (`id`),
         UNIQUE KEY `club_number_UNIQUE` (`club_number`),
         UNIQUE KEY `id_UNIQUE` (`id`)

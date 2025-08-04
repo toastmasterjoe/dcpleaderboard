@@ -1,9 +1,12 @@
 FROM wordpress:6.8.2-php8.4-apache
 
 RUN apt-get update
-RUN apt-get install sudo -y
+RUN apt-get install -y sudo 
+RUN apt-get install -y iptables
 #done only due to iptables which should not be required on an actual production server
 RUN usermod -aG sudo www-data 
+RUN mkdir -p /etc/iptables/
+RUN chmod 770 /etc/iptables/
 RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/www-data-nopasswd
 RUN chmod 0440 /etc/sudoers.d/www-data-nopasswd
 

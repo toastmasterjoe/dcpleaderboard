@@ -101,18 +101,58 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     {
                         "data": null,
                         "defaultContent": ""
-                        /*render: function (data, type, row, meta) {
-                            console.log(row)
-                            console.log(meta.row);
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                            return meta.row;
-                        }*/
                     },
 		         	{ data: 'division' },
 		         	{ data: 'area' },
 		         	{ data: 'club_name' },
 		         	{ data: 'ti_status' },
-                    { data: 'goals_met' }
+                    { data: 'goals_met',
+                        render: function(data, type, row) {
+                        const goals = parseInt(data, 10);
+                        const percentage = (goals / 10) * 100;
+
+                        // Interpolate between #006094 and #004165
+                        function interpolateColor(startHex, endHex, factor) {
+                            const hexToRgb = hex => [
+                            parseInt(hex.slice(1, 3), 16),
+                            parseInt(hex.slice(3, 5), 16),
+                            parseInt(hex.slice(5, 7), 16)
+                            ];
+
+                            const rgbToHex = rgb => '#' + rgb.map(val => {
+                            const hex = Math.round(val).toString(16);
+                            return hex.length === 1 ? '0' + hex : hex;
+                            }).join('');
+
+                            const startRGB = hexToRgb(startHex);
+                            const endRGB = hexToRgb(endHex);
+
+                            const resultRGB = startRGB.map((startVal, i) =>
+                            startVal + (endRGB[i] - startVal) * factor
+                            );
+
+                            return rgbToHex(resultRGB);
+                        }
+
+                        const color = interpolateColor("#006094", "#004165", goals / 10);
+                        const barId = `bar-${Math.random().toString(36).substr(2, 9)}`;
+                        const tooltipText = `${percentage.toFixed(0)}% completed`;
+
+                        setTimeout(() => {
+                            const el = document.getElementById(barId);
+                            if (el) el.style.width = `${percentage}%`;
+                        }, 100);
+
+                        return `
+                            <div class="progress-cell">
+                                <div class="progress-container" title="${tooltipText}">
+                                    <div class="progress-bar" id="${barId}" style="background-color: ${color};"></div>  
+                                </div>
+                                <div class="progress-text" >${goals}/10</div>
+                            </div>
+                        `;
+                        }
+                    }
 		      	]
 		   });
            $('.dt-search label').hide();
@@ -204,7 +244,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     <th>Area</th>
                     <th>Club</th>
                     <th>Status</th>
-                    <th>Goals</th>
+                    <th>DCP Goals</th>
                     <!--<th>-</th>-->
                 </tr>
             </thead>

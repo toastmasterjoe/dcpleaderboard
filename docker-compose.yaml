@@ -38,6 +38,8 @@ services:
     build: 
       context: ./infrastructure/staging/
       dockerfile: staging.Dockerfile
+    cap_add:
+      - NET_ADMIN
     ports:
       - 8181:80
     env_file: ./infrastructure/staging/.staging.env

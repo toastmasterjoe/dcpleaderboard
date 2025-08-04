@@ -185,3 +185,27 @@ form input[type="submit"]:hover {
   background-color: #006094; /* Green fill */
   transition: width 0.3s ease;
 }
+
+
+.progress-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* spacing between bar and text */
+}
+.progress-container {
+  width: 100px;
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 20px;
+  width: 0px;
+  transition: width 2s ease-in-out;
+}
+
+.progress-text {
+  font-size: 12px;
+  white-space: nowrap;
+}
