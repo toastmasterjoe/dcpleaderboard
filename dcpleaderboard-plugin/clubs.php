@@ -29,6 +29,8 @@ class Clubs {
     }
 
     public function get_divisions() {
+
+        //TODO: add caching;
         global $wpdb;
                  
         // Prepared statement (Highly recommended for security):
@@ -38,6 +40,7 @@ class Clubs {
     }
 
     public function get_areas($division) {
+         //TODO: add caching;
         global $wpdb;
                  
         // Prepared statement (Highly recommended for security):
@@ -55,6 +58,7 @@ class Clubs {
         return $row;
     }
     public function get_all_clubs(){
+         //TODO: add caching;
         global $wpdb;
         
         // Prepared statement (Highly recommended for security):

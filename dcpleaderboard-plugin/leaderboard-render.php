@@ -110,10 +110,10 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
             <label for="category">Category:</label>
             <select id="categoryFilter" class="dt-input">
                 <option value="">All Categories</option>
-                <option value="Serie A">Serie A</option>
-                <option value="Serie B">Serie B</option>
-                <option value="Serie C">Serie C</option>
-                <option value="Serie D">Serie D</option>
+                <option value="A">Serie A</option>
+                <option value="B">Serie B</option>
+                <option value="C">Serie C</option>
+                <option value="D">Serie D</option>
             </select>
 
             <label for="division">Division:</label>

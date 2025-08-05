@@ -1,42 +1,21 @@
+/*the function should always return a category
+if the record has no value in last year status and in this years status
+it should go to Serie D
+*/
+
+function ti_status_to_category(status, defaultCategory = 'D'){
+    var mapping = new Map([ ['', 'D'], ['D', 'C'], ['S', 'B'], ['P', 'A'] ]);
+    return !mapping.has(status)? defaultCategory : mapping.get(status);
+}
 
 function calculate_category(row) {
-    var category = '';
-    switch (row.ti_status_last_year) {
-        case '':
-            category = 'D';
-            break;
-        case 'D':
-            category = 'C';
-            break;
-        case 'S':
-            category = 'B';
-            break;
-        case 'P':
-            category = 'A';
-            break;
-        default:
-            category = 'D';
-            break;
-    }
-    var newCategory = '';
-    switch (row.ti_status) {
-        case '':
-            newCategory = 'D';
-            break;
-        case 'D':
-            newCategory = 'C';
-            break;
-        case 'S':
-            newCategory = 'B';
-            break;
-        case 'P':
-            newCategory = 'A';
-            break;
-        default:
-            newCategory = 'A';
-            break;
-    }
-    return { "name": ((newCategory < category) ? newCategory : category), "promoted": newCategory < category };
+    const category = ti_status_to_category(row.ti_status_last_year);
+    const newCategory = ti_status_to_category(row.ti_status, 'A');
+    
+    return {
+        name: newCategory < category ? newCategory : category,
+        promoted: newCategory < category
+    };
 }
 
 function render_category(row) {
@@ -49,6 +28,15 @@ function render_category(row) {
         </div>
     `;
 }
+
+function populate_areas (data , $, table) {
+                    var areaSelect = $('#areaFilter');
+                    areaSelect.empty().append('<option value="">All Areas</option>');
+                    data.forEach(function (area) {
+                        areaSelect.append('<option value="' + area + '">' + area + '</option>');
+                    });
+                    table.draw();
+                }
 
 // Interpolate between #006094 and #004165
 function interpolateColor(startHex, endHex, factor) {
@@ -174,14 +162,14 @@ function init_document($) {
     $('.dt-search label').hide();
     $('.dt-search input').hide();
     $('.dt-search').append($(".custom-table-filter"));
-    $.fn.dataTable.ext.search.push(function (searchStr, data, index) {
+    $.fn.dataTable.ext.search.push(function (searchStr, data, index, rowData) {
         const selectedCategory = $('#categoryFilter').val();
         const selectedDivision = $('#divisionFilter').val();
         const selectedArea = $('#areaFilter').val();
         const division = data[1];
         const area = data[2];
-        const category = data[5].trim();
-        console.log(category);
+        const category = calculate_category(rowData).name;
+        console.log(`is row ${category} the same as selected ${selectedCategory}`);
         if (selectedCategory && category !== selectedCategory) return false;
         if (selectedDivision && division !== selectedDivision) return false;
         if (selectedArea && area !== selectedArea) return false;
@@ -203,17 +191,8 @@ function init_document($) {
         if (division) {
             $.ajax({
                 url: window.location.origin + '/wp-json/dcpleaderboard/v1/areas?division=' + division,
-                success: function (data) {
-                    var areaSelect = $('#areaFilter');
-                    areaSelect.empty().append('<option value="">All Areas</option>');
-                    data.forEach(function (area) {
-                        areaSelect.append('<option value="' + area + '">' + area + '</option>');
-                    });
-                    table.draw();
-                },
-                error: function (err) {
-                    console.log('error:' + err);
-                }
+                success: (data) => populate_areas (data , $, table) ,
+                error:  (err) => console.log('error:' + err)
             });
         } else {
             var areaSelect = $('#areaFilter');

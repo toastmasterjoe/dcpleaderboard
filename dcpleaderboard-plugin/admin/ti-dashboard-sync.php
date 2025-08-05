@@ -28,6 +28,7 @@ require_once plugin_dir_path( __FILE__ ) . '/../clubs.php';
 $memoryStream = ''; 
 
 function dashboard_sync() {
+
     // Get parameters from the request (if any)
     //$param1 = $request->get_param( 'param1' );
     // Perform your logic here (e.g., database queries, calculations, etc.)
@@ -42,6 +43,9 @@ function dashboard_sync() {
     $clubs = new Clubs();
     $clubs->upsert_all_clubs($result);
     update_ti_status_last_year();
+
+     //TODO: once caching is added invalidate it
+
     // Return the data as a REST response
     return $data;
 }
