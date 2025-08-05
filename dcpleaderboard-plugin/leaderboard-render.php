@@ -48,7 +48,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
    
     wp_enqueue_script(
         'bootstrap', // handle
-        plugin_dir_url(__FILE__)  . '/js/bootstrap.bundle.min.js', // script path
+        plugin_dir_url(__FILE__)  . 'js/bootstrap.bundle.min.js', // script path
         array(), // dependencies
         '5.3.7', // version
         true // load in footer
@@ -56,7 +56,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 
     wp_enqueue_script(
         'datatables', // handle
-        plugin_dir_url(__FILE__)  . '/js/datatables.min.js', // script path
+        plugin_dir_url(__FILE__)  . 'js/datatables.min.js', // script path
         array('jquery', 'bootstrap'), // dependencies
         '2.3.2', // version
         true // load in footer
@@ -64,25 +64,25 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 
      wp_enqueue_script(
         'leaderboard-render', // handle
-        plugin_dir_url(__FILE__)  . '/js/leaderboard-render.js', // script path
+        plugin_dir_url(__FILE__)  . 'js/leaderboard-render.js', // script path
         array('jquery', 'bootstrap','datatables'), // dependencies
         '1.0.0', // version
-        true // load in footer
+        false // do not load in footer
     );
 
     wp_enqueue_style(
         'bootstrap', // Handle name
-        plugin_dir_url(__FILE__) . '/css/bootstrap.min.css' // Path to the file
+        plugin_dir_url(__FILE__) . 'css/bootstrap.min.css' // Path to the file
     );
 
     wp_enqueue_style(
         'datatables', // Handle name
-        plugin_dir_url(__FILE__) . '/css/datatables.min.css' // Path to the file
+        plugin_dir_url(__FILE__) . 'css/datatables.min.css' // Path to the file
     );
 
     wp_enqueue_style(
         'dcpleaderboard-style', // Handle name
-        plugin_dir_url(__FILE__) . '/css/dcpleaderboard-styles.css' // Path to the file
+        plugin_dir_url(__FILE__) . 'css/dcpleaderboard-styles.css' // Path to the file
     );
 
     $clubsDriver = new Clubs();
@@ -100,55 +100,10 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 
     // Start output buffering to capture HTML
     ob_start();
-    ?>
-
+    
+/*
 	<script type="text/javascript">
-        function render_category(data, type, row){
-                            console.log(row.ti_status);
-                            var category = '';
-                            switch(data){
-                                case '':
-                                    category = 'D';
-                                    break;
-                                case 'D':
-                                    category = 'C';
-                                    break;
-                                case 'S':
-                                    category = 'B';
-                                    break;
-                                case 'P':
-                                    category = 'A';
-                                    break;
-                                default:
-                                    category = 'D';
-                                    break;
-                            }
-                            var newCategory = '';
-                            switch(row.ti_status){
-                                case '':
-                                    newCategory = 'D';
-                                    break;
-                                case 'D':
-                                    newCategory = 'C';
-                                    break;
-                                case 'S':
-                                    newCategory = 'B';
-                                    break;
-                                case 'P':
-                                    newCategory = 'A';
-                                    break;
-                                default:
-                                    newCategory = 'A';
-                                    break;
-                            }
-                            return `
-                            <div class="progress-cell">
-                                <div class="progress-text" >${( (newCategory < category) ?'<span class="promotion-marker">&#9650;</span>': '<span class="promotion-marker">&nbsp;</span>')}
-                                    Serie ${( (newCategory < category) ? newCategory : category )}
-                                </div>
-                            </div>
-                            `;
-                        }
+        jQuery(document).ready(init_document($));
         jQuery(document).ready(function($) {
             $.ajax({
                 url: '<?=site_url().'/wp-json/dcpleaderboard/v1/divisions'?>',
@@ -185,7 +140,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
 		         	{ data: 'ti_status' },
                     { data: 'ti_status_last_year',
                         render: (data, type, row) => render_category(data, type, row)
-                        /*
+                        
                         render: function(data, type, row){
                             console.log(row.ti_status);
                             var category = '';
@@ -232,7 +187,8 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                             </div>
                             `;
                         }
-                            */
+                            
+
                     },
                     { data: 'goals_met',
                         render: function(data, type, row) {
@@ -361,8 +317,11 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
         
 	</script>
     
-    
-    
+   */
+  ?>
+    <script type="text/javascript">
+        jQuery(document).ready(($)=>init_document($));
+    </script>
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <div class="custom-table-filter">
