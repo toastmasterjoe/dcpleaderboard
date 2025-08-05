@@ -107,6 +107,15 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <div class="custom-table-filter">
+            <label for="category">Category:</label>
+            <select id="categoryFilter" class="dt-input">
+                <option value="">All Categories</option>
+                <option value="Serie A">Serie A</option>
+                <option value="Serie B">Serie B</option>
+                <option value="Serie C">Serie C</option>
+                <option value="Serie D">Serie D</option>
+            </select>
+
             <label for="division">Division:</label>
             <select id="divisionFilter" class="dt-input">
                 <option value="">All Divisions</option>
