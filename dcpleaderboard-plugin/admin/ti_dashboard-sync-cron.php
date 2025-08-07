@@ -8,8 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once plugin_dir_path( __FILE__ ) . 'ti-dashboard-sync.php'; 
 
 // Define the same hook name used for scheduling.
-Global $event_hook;
-$event_hook = 'dcpleaderboard_cron_job_hook';
+define('DCP_LEADERBOARD_CRON_HOOK', 'dcpleaderboard_cron_job_hook');
 
 /**
  * Step 1: Define a custom cron interval (optional but useful).
@@ -20,16 +19,7 @@ $event_hook = 'dcpleaderboard_cron_job_hook';
  * @return array The modified array of WP-Cron schedules.
  */
 function dcpleaderboard_cron_intervals( $schedules ) {
-    // Add a 'thirty_seconds' interval.
-    /*$schedules['thirty_seconds'] = array(
-        'interval' => 30, // Interval in seconds
-        'display'  => __( 'Every 30 Seconds', 'dcpleaderboard-text-domain' ) // Display name for the interval
-    );*/
-    /*$schedules['daily'] = array(
-        'interval' => 86400, // Interval in seconds
-        'display'  => __( 'Every Day', 'dcpleaderboard-text-domain' ) // Display name for the interval
-    );*/
-    // You can add more custom intervals here if needed.
+        // You can add more custom intervals here if needed.
     $schedules['five_minutes'] = array(
         'interval' => 300, // 5 minutes * 60 seconds/minute
         'display'  => __( 'Every 5 Minutes', 'dcpleaderboard-text-domain' )
@@ -47,14 +37,14 @@ function wp_dcpleaderboard_cron_activation() {
 
     // Check if the event is already scheduled.
     // wp_next_scheduled() returns the next scheduled timestamp or false if not scheduled.
-    if ( ! wp_next_scheduled( $event_hook ) ) {
+    if ( ! wp_next_scheduled( DCP_LEADERBOARD_CRON_HOOK ) ) {
         // Schedule the event.
         // wp_schedule_event( timestamp, recurrence, hook, args )
         // timestamp: When the event should first run (time()).
         // recurrence: How often the event should repeat ('hourly', 'twicedaily', 'daily', or your custom interval 'thirty_seconds').
         // hook: The name of the action hook to execute.
         // args: Optional array of arguments to pass to the hook.
-        wp_schedule_event( time(), 'daily', $event_hook );
+        wp_schedule_event( time(), 'daily', DCP_LEADERBOARD_CRON_HOOK );
     }
 }
 
@@ -78,7 +68,7 @@ function dcpleaderboard_cron_job_function() {
 }
 // Hook your function to the custom event hook.
 // add_action( hook, callback_function, priority, accepted_args )
-add_action( 'dcpleaderboard_cron_job_hook', 'dcpleaderboard_cron_job_function' );
+add_action( DCP_LEADERBOARD_CRON_HOOK, 'dcpleaderboard_cron_job_function' );
 
 /**
  * Step 4: Unschedule the custom WP-Cron event on plugin deactivation.
@@ -89,14 +79,14 @@ function wp_dcpleaderboard_cron_deactivation() {
     
 
     // Get the next scheduled timestamp for the event.
-    $timestamp = wp_next_scheduled( $event_hook );
+    $timestamp = wp_next_scheduled( DCP_LEADERBOARD_CRON_HOOK );
 
     // If the event is scheduled, clear it.
     if ( $timestamp ) {
         // wp_unschedule_event( timestamp, hook, args )
         // You need to pass the exact timestamp and hook name that was used to schedule it.
         // If you used arguments, you'd need to pass them here too.
-        wp_unschedule_event( $timestamp, $event_hook );
+        wp_unschedule_event( $timestamp, DCP_LEADERBOARD_CRON_HOOK );
     }
 }
 
@@ -106,7 +96,7 @@ function wp_dcpleaderboard_cron_deactivation() {
 function dcpleaderboard_admin_notice() {
     if ( current_user_can( 'manage_options' ) ) {
         echo '<div class="notice notice-info is-dismissible">';
-        echo '<p><strong>DCPLeaderboard WP-Cron Plugin</strong> is active. A cron job is scheduled to run every 30 seconds (check your debug log for output).</p>';
+        echo '<p><strong>DCPLeaderboard WP-Cron Plugin</strong> is active. The cron job is scheduled to run every 1 day (check your debug log for output).</p>';
         echo '</div>';
     }
 }
