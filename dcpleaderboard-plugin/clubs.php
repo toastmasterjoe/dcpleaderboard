@@ -153,7 +153,7 @@ class Clubs {
        }
        return 0;
     }
-    public function update_club($clubData, $currentClubData) {
+    public function update_club($newClubData, $currentClubData) {
         // https://developer.wordpress.org/reference/classes/wpdb/update/
         global $wpdb;  // Make sure $wpdb is available
         $sql = "UPDATE $this->table_name SET
@@ -168,14 +168,14 @@ class Clubs {
                 `mem_dues_oct` = %d, `mem_dues_apr` = %d, `off_list_on_time` = %d,
                 `ti_status` = %s
             WHERE id = %d;";
-        $scoreAchievedAt = $clubData['goals_met']>$currentClubData['goals_met'] ? current_time('mysql') : $currentClubData['score_achieved_at'];
-        $wpdb->query( $wpdb->prepare( $sql, current_time('mysql'), $scoreAchievedAt, $clubData['district'], $clubData['division'], $clubData['area'], $clubData['club_name'], $clubData['club_status'], $clubData['csp'], 
-                $clubData['mem_base'], $clubData['active_members'], $clubData['net_growth'], $clubData['goals_met'],
-                    $clubData['level_1'], $clubData['level_2'], $clubData['add_level_2'], $clubData['level_3'], $clubData['level_4_5_DTM'], $clubData['add_level_4_5_DTM'],
-                    $clubData['new_members'], $clubData['add_new_members'],
-                    $clubData['officers_round_1'], $clubData['officers_round_2'], 
-                    $clubData['mem_dues_oct'], $clubData['mem_dues_apr'], $clubData['off_list_on_time'],
-                    $clubData['ti_status'], $currentClubData['id'])); 
+        $scoreAchievedAt = $newClubData['goals_met']>$currentClubData['goals_met'] ? current_time('mysql') : $currentClubData['score_achieved_at'];
+        $wpdb->query( $wpdb->prepare( $sql, current_time('mysql'), $scoreAchievedAt, $newClubData['district'], $newClubData['division'], $newClubData['area'], $newClubData['club_name'], $newClubData['club_status'], $newClubData['csp'], 
+                $newClubData['mem_base'], $newClubData['active_members'], $newClubData['net_growth'], $newClubData['goals_met'],
+                    $newClubData['level_1'], $newClubData['level_2'], $newClubData['add_level_2'], $newClubData['level_3'], $newClubData['level_4_5_DTM'], $newClubData['add_level_4_5_DTM'],
+                    $newClubData['new_members'], $newClubData['add_new_members'],
+                    $newClubData['officers_round_1'], $newClubData['officers_round_2'], 
+                    $newClubData['mem_dues_oct'], $newClubData['mem_dues_apr'], $newClubData['off_list_on_time'],
+                    $newClubData['ti_status'], $newCurrentClubData['id'])); 
   
         if ($wpdb->last_error) {
             error_log("Database update error: " . $wpdb->last_error);
