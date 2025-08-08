@@ -22,6 +22,31 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+function wp_dcpleaderboard_rules_create_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'points_rule';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = " CREATE TABLE IF NOT EXISTS $table_name ( 
+            `id` INT auto_increment NOT NULL,
+            `automatic` TINYINT DEFAULT 1 NOT NULL,
+            `multi_award` TINYINT DEFAULT 0 NOT NULL,
+            `points` INTEGER DEFAULT 1 NOT NULL,
+            `name` varchar(100) NOT NULL,
+            `description` varchar(255) NOT NULL,
+            `function_name` varchar(255) NULL,
+            CONSTRAINT point_rule_pk PRIMARY KEY (id)
+        )
+        $charset_collate;
+        CREATE FULLTEXT INDEX point_rule_name_IDX ON $table_name (`name`);
+    ";
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta( $sql );
+    if ($wpdb->last_error) {
+        error_log("Database  error: " . $wpdb->last_error);
+    }
+}
+
 function wp_dcpleaderboard_clubs_create_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'dcpleaderboard_clubs';
@@ -67,6 +92,11 @@ function wp_dcpleaderboard_clubs_create_table() {
     }
 }
 
+function wp_dcpleaderboard_create_table() {
+    wp_dcpleaderboard_clubs_create_table();
+    wp_dcpleaderboard_rules_create_table();
+}
+
 function wp_dcpleaderboard_clubs_delete_table() {
     global $wpdb;
 
@@ -76,6 +106,28 @@ function wp_dcpleaderboard_clubs_delete_table() {
     if ($wpdb->last_error) {
         error_log("Database  error: " . $wpdb->last_error);
     }
-}      
+}     
+
+function wp_dcpleaderboard_rules_delete_table() {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'points_rule';
+
+    $wpdb->query( "DROP INDEX point_rule_name_IDX ON $table_name;");
+                    
+    if ($wpdb->last_error) {
+        error_log("Database  error: " . $wpdb->last_error);
+    }
+
+    $wpdb->query( "DROP TABLE IF EXISTS $table_name;" );
+    if ($wpdb->last_error) {
+        error_log("Database  error: " . $wpdb->last_error);
+    }
+}
+
+function wp_dcpleaderboard_delete_table() {
+    wp_dcpleaderboard_rules_delete_table();
+    wp_dcpleaderboard_clubs_delete_table();
+}
   
 ?>

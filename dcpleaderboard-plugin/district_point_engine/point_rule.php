@@ -1,11 +1,31 @@
 <?php
+/*
+ * DCP Leaderboard Plugin
+ * Copyright (C) 2025 Joseph Galea
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+// Exit if accessed directly to prevent direct access to the file.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
-// This class implements all three properties as traditional, un-hooked
-// properties. That's entirely valid.
+require_once plugin_dir_path( __FILE__ ) . 'point_calculators.php'; 
+
 class PointRule 
 {
     private int $id;
-    private string $uuid;
     private bool $automatic;
     private bool $multiAward;
     private int $points; // TODO should function determine point or points be based on the rule
@@ -14,17 +34,107 @@ class PointRule
      * In case of automatic rule should this value be ignored or else it can be the number of points per award
      */
     private string $name;
+    private string $description;
     private string $functionName;
 
-    public function __construct(int $id, string $uuid, bool $automatic, bool $multiAward, int $points, string $name, string $functionName)
+    private string $table_name;
+
+    public function __construct(bool $automatic = true, bool $multiAward = false, int $points = 1, string $name ="rule", string $description="", string $functionName="",int $id = 0)
     {
+        global $wpdb;
+        $this->table_name = $wpdb->prefix . 'points_rule'; // Replace with your table name
+        if($automatic && empty($functionName)){
+            throw new Exception("misconfigured rule, function name is required for automatic rules");
+        }
         $this->id = $id;
-        $this->uuid = $uuid;
         $this->automatic = $automatic;
+        $this->multiAward = $multiAward;
+        $this->points = $points;
         $this->name = $name;
+        $this->description = $description;
         $this->functionName = $functionName;
     }
 
+    public function getRuleById(int $id): PointRule {
+        global $wpdb;
+                 
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id );
+        $row = $wpdb->get_row( $sql, ARRAY_A ); 
+        $result = new PointRule($row['automatic'],$row['multi_award'],$row['points'],$row['name'], $row['description'],$row['function_name'], $row['id']);
+        return $result;
+    }
+
+    public function getAllRules(): array {
+        global $wpdb;
+                 
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id );
+        $rows = $wpdb->get_results( $sql, ARRAY_A ); 
+        $results = array();
+        foreach ($rows as $row){
+            $result = new PointRule($row['automatic'],$row['multi_award'],$row['points'],$row['name'], $row['description'],$row['function_name'], $row['id']);
+            array_push($results, $result);
+        }
+        return $results;
+    }
+
+    public function saveRule() {
+        if (empty($id)) {
+            return $this->createRule();
+        } else {
+            return $this->updateRule();
+        }
+    }
+
+    private function createRule() {
+        global $wpdb;
+        $insert_sql = "INSERT INTO {$this->table_name}
+                        ( `automatic`, `multi_award`, `points`, `name`, `description`, `function_name`)
+                        VALUES(%d, %d, %d, %s, %s, %s);
+        ";
+        trim($insert_sql);
+        $wpdb->query( $wpdb->prepare( $insert_sql, (int)$this->automatic,
+                                    (int)$this->multiAward,
+                                    $this->points,
+                                    $this->name,
+                                    $this->description, 
+                                    $this->functionName));
+        if ($wpdb->last_error) {
+            error_log("Database insert error: " . $wpdb->last_error);
+        } else {
+            $inserted_id = $wpdb->insert_id;
+            return $inserted_id;
+        }
+        return 0;
+    }
+
+    public function updateRule() {
+        global $wpdb;
+        
+        $update_sql = "UPDATE {$this->table_name}
+                        SET `automatic`=%d, `multi_award`=%d, `points`=%d, `name`=%s, `description`=%s, `function_name`=%s
+                        WHERE `id`=%d;";
+        $wpdb->query( $wpdb->prepare( $update_sql, (int)$this->automatic,
+                                    (int)$this->multiAward,
+                                    $this->points,
+                                    $this->name,
+                                    $this->description, 
+                                    $this->functionName,
+                                    $this->id));
+        if ($wpdb->last_error) {
+            error_log("Database update error: " . $wpdb->last_error);
+            return 0;
+        } else {
+            $rows_affected = $wpdb->rows_affected; // Get the number of rows updated
+            if($rows_affected > 1){
+                error_log("Error: multiple records updated");
+            } else if ($rows_affected <= 0) {
+                error_log("Error: no record has been updated");
+            }
+            return $rows_affected;
+        }
+    }
 
     public function calculate($club): int{
         if(($automatic) && ($functionName)){
@@ -46,7 +156,10 @@ class PointRule
 /*
     We only need to know when district goal value was incremented like dcp goals.
     TODO: Decide whether to calculate District goals from full and half dcp goals as a single goal or seperate goal.
-*/ 
-
+    How to account for increased points to a rule: 
+    One Option: In the database store the point rule triggered and the date, but recalculate points every time, to enable for increased assigned points to a rule. Then store total per club
+        Its important to store point rule triggered or manually awarded so admin can check these especially when awarding points.
+    */ 
+/** From admin screen you can only create manual rules */
     
 ?>

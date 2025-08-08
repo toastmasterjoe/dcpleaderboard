@@ -47,7 +47,7 @@ require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php';
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
 
 function wp_dcpleaderboard_activate(){
-    wp_dcpleaderboard_clubs_create_table();
+    wp_dcpleaderboard_create_table();
     wp_dcpleaderboard_cron_activation();
 }
 register_activation_hook( __FILE__ , 'wp_dcpleaderboard_activate' );
@@ -58,7 +58,7 @@ function wp_dcpleaderboard_deactivate(){
 register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_deactivate' );
 
 function wp_dcpleaderboard_uninstall() {
-    wp_dcpleaderboard_clubs_delete_table();
+    wp_dcpleaderboard_delete_table();
 }
 register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 

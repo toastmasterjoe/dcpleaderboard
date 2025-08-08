@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Clubs {
     // https://g.co/gemini/share/415f9ef8785e plugin in class
-    private $table_name;
+    private string $table_name;
     public function __construct(){
         global $wpdb;
         $this->table_name = $wpdb->prefix . 'dcpleaderboard_clubs'; // Replace with your table name
