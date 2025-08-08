@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+require_once plugin_dir_path( __FILE__ ) . 'district_point_engine/point_rule.php'; 
+
 function wp_dcpleaderboard_rules_create_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'points_rule';
@@ -92,9 +94,18 @@ function wp_dcpleaderboard_clubs_create_table() {
     }
 }
 
+function wp_dcpleaderboard_rules_populate_table() {
+    $pointRuleDriver = new PointRule(false);
+    if(empty($pointRuleDriver->getAllRules())){
+        $level1Rule = new PointRule(true,false,1,"Achieve 4 level 1's","Educational Goals - Achieve 4 level 1's","award_level1_points");
+        $level1Rule->saveRule();
+    }
+}
+
 function wp_dcpleaderboard_create_table() {
     wp_dcpleaderboard_clubs_create_table();
     wp_dcpleaderboard_rules_create_table();
+    wp_dcpleaderboard_rules_populate_table();
 }
 
 function wp_dcpleaderboard_clubs_delete_table() {
@@ -124,8 +135,20 @@ function wp_dcpleaderboard_rules_delete_table() {
         error_log("Database  error: " . $wpdb->last_error);
     }
 }
+function wp_dcpleaderboard_rules_truncate_table(){
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'points_rule';
+
+    $wpdb->query( "TRUNCATE TABLE $table_name;");
+                    
+    if ($wpdb->last_error) {
+        error_log("Database  error: " . $wpdb->last_error);
+    }
+}
 
 function wp_dcpleaderboard_delete_table() {
+    wp_dcpleaderboard_rules_truncate_table();
     wp_dcpleaderboard_rules_delete_table();
     wp_dcpleaderboard_clubs_delete_table();
 }
