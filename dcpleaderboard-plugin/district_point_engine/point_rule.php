@@ -136,7 +136,7 @@ class PointRule
         }
     }
 
-    public function calculate($club): int{
+    public function calculate(array $club, int $triggers): int{
         if(($automatic) && ($functionName)){
             if (function_exists($functionName)) {
                 try{
