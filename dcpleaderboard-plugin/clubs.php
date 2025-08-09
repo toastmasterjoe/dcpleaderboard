@@ -22,19 +22,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Clubs {
     // https://g.co/gemini/share/415f9ef8785e plugin in class
-    private $table_name;
+    private static string $tableName = "";
+    private static string $district = "";
     public function __construct(){
-        global $wpdb;
-        $this->table_name = $wpdb->prefix . 'dcpleaderboard_clubs'; // Replace with your table name
+        
+        if(empty(self::$tableName)) {
+            global $wpdb;
+            self::$tableName = $wpdb->prefix . 'dcpleaderboard_clubs'; // Replace with your table name
+        }
+        if(empty(self::$district)){
+            self::$district = get_option('dcpleaderboard_district');
+        }
     }
 
     public function get_divisions() {
 
         //TODO: add caching;
         global $wpdb;
-                 
+        $tableName=self::$tableName;         
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT distinct division FROM {$this->table_name} order by division" );
+        $sql = $wpdb->prepare( "SELECT distinct division FROM {$tableName}  where district = %s order by division", self::$district );
         $row = $wpdb->get_results( $sql, ARRAY_A ); 
         return $row;
     }
@@ -42,28 +49,37 @@ class Clubs {
     public function get_areas($division) {
          //TODO: add caching;
         global $wpdb;
-                 
+        $tableName=self::$tableName;
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT distinct area FROM {$this->table_name} where division = %s order by area", $division );
+        $sql = $wpdb->prepare( "SELECT distinct area FROM {$tableName} WHERE district = %s and division = %s order by area", self::$district, $division );
         $row = $wpdb->get_results( $sql, ARRAY_A ); 
         return $row;
     }
 
     public function get_club_by_number($clubNumber){
         global $wpdb;
-                 
+        $tableName=self::$tableName;
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE club_number = %s", $clubNumber );
+        $sql = $wpdb->prepare( "SELECT * FROM {$tableName} WHERE club_number = %s", $clubNumber );
         $row = $wpdb->get_row( $sql, ARRAY_A ); 
         return $row;
     }
-    public function get_all_clubs(){
+
+    public static function getAllClubs(bool $orderByDCP = true){
          //TODO: add caching;
         global $wpdb;
         
+        $sql = "";
+        $table = self::$tableName;
+        if($orderByDCP){
+            $sql = "SELECT * FROM {$table} where district = %s ORDER BY goals_met DESC, score_achieved_at ASC";
+        } else {
+            $sql = "SELECT * FROM {$table} where district = %s ORDER BY district_goals_met DESC, district_score_achieved_at ASC";
+        }
+        
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} ORDER BY goals_met DESC, score_achieved_at ASC");
-        $rows = $wpdb->get_results( $sql, OBJECT ); 
+        $preparedStatement = $wpdb->prepare( $sql, self::$district);
+        $rows = $wpdb->get_results( $preparedStatement, OBJECT ); 
         return $rows;
     }
 
@@ -72,8 +88,8 @@ class Clubs {
         $offset = ( $current_page - 1 ) * $items_per_page;
 
         // Build WHERE clause
-        $where = [];
-        $params = [];
+        $where = ["district = %s"];
+        $params = [self::$district];
         
         if ($division) {
             $where[] = "division = %s";
@@ -88,11 +104,11 @@ class Clubs {
         if (!empty($where)) {
             $where_sql = 'WHERE ' . implode(' AND ', $where);
         }
-
-        $count_sql = "SELECT count(id) FROM {$this->table_name} $where_sql";
+        $tableName=self::$tableName;
+        $count_sql = "SELECT count(id) FROM {$tableName} $where_sql";
         $total_items = $wpdb->get_var( $wpdb->prepare($count_sql, ...$params) );
 
-        $data_sql ="SELECT * FROM {$this->table_name} $where_sql ORDER BY goals_met DESC, score_achieved_at ASC LIMIT %d OFFSET %d";
+        $data_sql ="SELECT * FROM {$tableName} $where_sql ORDER BY goals_met DESC, score_achieved_at ASC LIMIT %d OFFSET %d";
         $params[] = $items_per_page;
         $params[] = $offset;
         // Prepared statement (Highly recommended for security):
@@ -118,8 +134,8 @@ class Clubs {
        global $wpdb;  // Make sure $wpdb is available
        
        // Example using placeholders (more secure and often preferred):
-       
-       $sql = "INSERT INTO $this->table_name
+       $tableName = self::$tableName;
+       $sql = "INSERT INTO $tableName
         (`updated_at`, `score_achieved_at`, 
         `district`, `division`, `area`, `club_number`, `club_name`, `club_status`, `csp`,
         `mem_base`, `active_members`, `net_growth`, `goals_met`,
@@ -153,10 +169,11 @@ class Clubs {
        }
        return 0;
     }
-    public function update_club($clubData, $currentClubData) {
+    public function update_club($newClubData, $currentClubData) {
         // https://developer.wordpress.org/reference/classes/wpdb/update/
         global $wpdb;  // Make sure $wpdb is available
-        $sql = "UPDATE $this->table_name SET
+        $tableName = self::$tableName;
+        $sql = "UPDATE $tableName SET
                 `updated_at` = %s, `score_achieved_at` = %s, 
                 `district` = %s, `division`= %s, `area`=%s, 
                 `club_name` = %s, `club_status` = %s, `csp` = %s, 
@@ -168,14 +185,14 @@ class Clubs {
                 `mem_dues_oct` = %d, `mem_dues_apr` = %d, `off_list_on_time` = %d,
                 `ti_status` = %s
             WHERE id = %d;";
-        $scoreAchievedAt = $clubData['goals_met']>$currentClubData['goals_met'] ? current_time('mysql') : $currentClubData['score_achieved_at'];
-        $wpdb->query( $wpdb->prepare( $sql, current_time('mysql'), $scoreAchievedAt, $clubData['district'], $clubData['division'], $clubData['area'], $clubData['club_name'], $clubData['club_status'], $clubData['csp'], 
-                $clubData['mem_base'], $clubData['active_members'], $clubData['net_growth'], $clubData['goals_met'],
-                    $clubData['level_1'], $clubData['level_2'], $clubData['add_level_2'], $clubData['level_3'], $clubData['level_4_5_DTM'], $clubData['add_level_4_5_DTM'],
-                    $clubData['new_members'], $clubData['add_new_members'],
-                    $clubData['officers_round_1'], $clubData['officers_round_2'], 
-                    $clubData['mem_dues_oct'], $clubData['mem_dues_apr'], $clubData['off_list_on_time'],
-                    $clubData['ti_status'], $currentClubData['id'])); 
+        $scoreAchievedAt = $newClubData['goals_met']>$currentClubData['goals_met'] ? current_time('mysql') : $currentClubData['score_achieved_at'];
+        $wpdb->query( $wpdb->prepare( $sql, current_time('mysql'), $scoreAchievedAt, $newClubData['district'], $newClubData['division'], $newClubData['area'], $newClubData['club_name'], $newClubData['club_status'], $newClubData['csp'], 
+                $newClubData['mem_base'], $newClubData['active_members'], $newClubData['net_growth'], $newClubData['goals_met'],
+                    $newClubData['level_1'], $newClubData['level_2'], $newClubData['add_level_2'], $newClubData['level_3'], $newClubData['level_4_5_DTM'], $newClubData['add_level_4_5_DTM'],
+                    $newClubData['new_members'], $newClubData['add_new_members'],
+                    $newClubData['officers_round_1'], $newClubData['officers_round_2'], 
+                    $newClubData['mem_dues_oct'], $newClubData['mem_dues_apr'], $newClubData['off_list_on_time'],
+                    $newClubData['ti_status'], $currentClubData['id'])); 
   
         if ($wpdb->last_error) {
             error_log("Database update error: " . $wpdb->last_error);
@@ -183,9 +200,7 @@ class Clubs {
             $rows_affected = $wpdb->rows_affected; // Get the number of rows updated
             if($rows_affected > 1){
                 error_log("Error: multiple records updated");
-            } else if ($rows_affected <= 0) {
-                error_log("Error: no record has been updated");
-            }
+            } 
         }
        
     }
@@ -193,25 +208,46 @@ class Clubs {
     public function update_club_ti_status_last_year($clubs) {
         // https://developer.wordpress.org/reference/classes/wpdb/update/
         global $wpdb;  // Make sure $wpdb is available
-        $sql = "UPDATE $this->table_name SET
+        $tableName = self::$tableName;
+        $sql = "UPDATE $tableName SET
                 `ti_status_last_year` = %s
             WHERE club_number = %s;";
         foreach ($clubs as $clubData) {
             $wpdb->query( $wpdb->prepare( $sql, 
                         $clubData['ti_status'], $clubData['club_number'])); 
-            error_log($wpdb->last_query);
             if ($wpdb->last_error) {
                 error_log("Database update error: " . $wpdb->last_error);
             } else {
                 $rows_affected = $wpdb->rows_affected; // Get the number of rows updated
                 if($rows_affected > 1){
                     error_log("Error: multiple records updated");
-                } else if ($rows_affected <= 0) {
-                    error_log("Error: no record has been updated");
-                }
+                } 
             }
         }
        
     }
+
+    public function update_club_district_points($clubDistrictPoints){
+        foreach ($clubDistrictPoints as $clubNumber => $clubPoints) {
+            $foundClub = $this->get_club_by_number($clubNumber);
+            global $wpdb;  // Make sure $wpdb is available
+            $tableName = self::$tableName;
+            $sql = "UPDATE $tableName SET
+                    `district_goals_met` = %d,
+                    `district_score_achieved_at` = %s
+                WHERE id = %d;";
+            $scoreAchievedAt = $foundClub['district_goals_met'] > $clubPoints || $clubPoints == 0 ? current_time('mysql') : $foundClub['district_score_achieved_at'];
+            $wpdb->query( $wpdb->prepare( $sql, $clubPoints, $scoreAchievedAt, $foundClub['id'])); 
+    
+            if ($wpdb->last_error) {
+                error_log("Database update error: " . $wpdb->last_error);
+            } else {
+                $rows_affected = $wpdb->rows_affected; // Get the number of rows updated
+                if($rows_affected > 1){
+                    error_log("Error: multiple records updated");
+                } 
+            }
+        }
+     }
 }
 ?>

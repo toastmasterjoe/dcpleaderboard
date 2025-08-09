@@ -28,9 +28,13 @@
   <?php settings_fields( 'dcpleaderboard_options_group' ); ?>
   <h3>Toastmasters Dashboard Data Export</h3>
   <p>The url will provide the url to use to extract data from the dashboard in csv format</p>
+  <table>
   <tr valign="top">
   <th scope="row"><label for="dcpleaderboard_export_url">Export URL</label></th>
   <td><input type="text" size=255 id="dcpleaderboard_export_url" name="dcpleaderboard_export_url" value="<?php echo get_option('dcpleaderboard_export_url'); ?>" /></td>
+  </tr>
+  <th scope="row"><label for="dcpleaderboard_district">District</label></th>
+  <td><input type="text" size=255 id="dcpleaderboard_district" name="dcpleaderboard_district" value="<?php echo get_option('dcpleaderboard_district'); ?>" /></td>
   </tr>
   </table>
   <?php  submit_button(); ?>

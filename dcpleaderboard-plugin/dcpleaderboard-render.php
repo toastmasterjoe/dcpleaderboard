@@ -70,6 +70,14 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
         false // do not load in footer
     );
 
+    wp_enqueue_script(
+        'dcp-leaderboard-render', // handle
+        plugin_dir_url(__FILE__)  . 'js/dcp-leaderboard-render.js', // script path
+        array('jquery', 'bootstrap','datatables'), // dependencies
+        '1.0.0', // version
+        false // do not load in footer
+    );
+
     wp_enqueue_style(
         'bootstrap', // Handle name
         plugin_dir_url(__FILE__) . 'css/bootstrap.min.css' // Path to the file
@@ -84,15 +92,12 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
         'dcpleaderboard-style', // Handle name
         plugin_dir_url(__FILE__) . 'css/dcpleaderboard-styles.css' // Path to the file
     );
-
-    $clubsDriver = new Clubs();
     
     // Handle filters
-    $division = isset($_GET['division']) ? sanitize_text_field($_GET['division']) : '';
+    /*$division = isset($_GET['division']) ? sanitize_text_field($_GET['division']) : '';
     $area = isset($_GET['area']) ? sanitize_text_field($_GET['area']) : '';
 
-    $current_page = isset( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;
-    $clubs=$clubsDriver->get_all_clubs_paged($atts['items_per_page'], $current_page, $division, $area);
+    $current_page = isset( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;*/
 
     // Sanitize attributes for safe output
     $title = esc_html($atts['title']);

@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     1.0.0
+ * Version:     2.0.0
  * Author:      Joseph Galea
  * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
@@ -42,12 +42,13 @@ require_once plugin_dir_path( __FILE__ ) . 'admin/options_page_register.php';
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti-dashboard-sync-rest-api.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti_dashboard-sync-cron.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'database-tables-setup.php'; 
-require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard-render.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'districtleaderboard-render.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
 
 function wp_dcpleaderboard_activate(){
-    wp_dcpleaderboard_clubs_create_table();
+    wp_dcpleaderboard_install_db();
     wp_dcpleaderboard_cron_activation();
 }
 register_activation_hook( __FILE__ , 'wp_dcpleaderboard_activate' );
@@ -58,7 +59,7 @@ function wp_dcpleaderboard_deactivate(){
 register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_deactivate' );
 
 function wp_dcpleaderboard_uninstall() {
-    wp_dcpleaderboard_clubs_delete_table();
+    wp_dcpleaderboard_uninstall_db();
 }
 register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 
@@ -68,8 +69,12 @@ function dcpleaderboard_register_settings() {
     error_log(">>dcpleaderboard_register_settings");
     add_option( 'dcpleaderboard_export_url', 'https://dashboards.toastmasters.org/export.aspx?type=CSV&report=clubperformance~109~1/31/2025~~2024-2025');
     register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_export_url', 'dcpleaderboard_sanitize_callback' );
-    add_option( 'dcpleaderboard_division', 'A');
-    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );
+    add_option( 'dcpleaderboard_district', '109');
+    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_district', 'dcpleaderboard_sanitize_callback' );
+    /*add_option( 'dcpleaderboard_division', 'A');
+    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );*/
+    add_action( 'update_option_dcpleaderboard_district', 'dcpleaderboard_district_changed',10,3);
+
 }
 add_action( 'admin_init', 'dcpleaderboard_register_settings' );
 
@@ -82,6 +87,7 @@ add_action( 'admin_enqueue_scripts', 'dcpleaderboard_admin_enqueue_scripts' );
 function dcpleaderboard_content_shortcode_init() {
     add_shortcode('dcpleaderboard_content_legacy', 'dcpleaderboard_content_legacy_shortcode_callback');
     add_shortcode('dcpleaderboard_content', 'dcpleaderboard_content_shortcode_callback');
+    add_shortcode('districtleaderboard_content', 'districtleaderboard_content_shortcode_callback');
 }
 add_action('init', 'dcpleaderboard_content_shortcode_init');
 

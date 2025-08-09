@@ -22,9 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . '/../toastmasters_util.php'; 
-require_once plugin_dir_path( __FILE__ ) . '/../general_utils.php'; 
+require_once plugin_dir_path( __FILE__ ) . '/../toastmasters-util.php'; 
+require_once plugin_dir_path( __FILE__ ) . '/../general-utils.php'; 
 require_once plugin_dir_path( __FILE__ ) . '/../clubs.php'; 
+require_once plugin_dir_path( __FILE__ ) . '/../district-point-engine/points-engine.php'; 
+
 $memoryStream = ''; 
 
 function dashboard_sync() {
@@ -32,7 +34,8 @@ function dashboard_sync() {
     // Get parameters from the request (if any)
     //$param1 = $request->get_param( 'param1' );
     // Perform your logic here (e.g., database queries, calculations, etc.)
-    $url = build_dashboard_url_club_progress();
+    $district = get_option('dcpleaderboard_district');
+    $url = build_dashboard_url_club_progress($district);
     $content = downloadRemoteFileAsStream($url);
     $result = processCsvString($content);
     
@@ -44,7 +47,9 @@ function dashboard_sync() {
     $clubs->upsert_all_clubs($result);
     update_ti_status_last_year();
 
-     //TODO: once caching is added invalidate it
+    $clubPoints = PointsEngine::reCalculatePoints($result);
+    $clubs->update_club_district_points($clubPoints);
+    //TODO: once caching is added invalidate it
 
     // Return the data as a REST response
     return $data;
@@ -54,7 +59,8 @@ function update_ti_status_last_year() {
      // Get parameters from the request (if any)
     //$param1 = $request->get_param( 'param1' );
     // Perform your logic here (e.g., database queries, calculations, etc.)
-    $url = build_dashboard_previous_year_url();
+    $district = get_option('dcpleaderboard_district');
+    $url = build_dashboard_previous_year_url($district);
     error_log($url);
     $content = downloadRemoteFileAsStream($url);
     error_log($content);

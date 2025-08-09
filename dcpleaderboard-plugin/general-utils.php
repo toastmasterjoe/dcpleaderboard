@@ -104,4 +104,6 @@ function processCsvString($csvString, $delimiter = ",", $enclosure = '"', $escap
     }
     return $rows;
 }
+
+
 ?>
