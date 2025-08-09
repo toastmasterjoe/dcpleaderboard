@@ -21,6 +21,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+
+require_once plugin_dir_path( __FILE__ ) . '/../database-tables-setup.php'; 
+
 function dcpleaderboard_options_page()
 {
   $template_file = locate_template( 'dcpleaderboard-plugin/templates/admin/plugin-options.php' );
@@ -41,6 +45,15 @@ function dcpleaderboard_admin_enqueue_scripts() {
       'api_url' => rest_url(),
       'nonce' => wp_create_nonce( 'wp_rest' ),
   ) );
+}
+
+function dcpleaderboard_district_changed($old_value, $new_value, $option_name){
+  if($old_value!=$new_value){
+    if($option_name=='dcpleaderboard_district') {
+      wp_dcpleaderboard_rules_trigger_truncate_table();
+      //wp_dcpleaderboard_clubs_truncate_table();
+    }
+  }
 }
 
 ?>

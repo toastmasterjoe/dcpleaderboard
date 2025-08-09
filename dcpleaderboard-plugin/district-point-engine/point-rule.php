@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'point_calculators.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'point-calculators.php'; 
 
 class PointRule 
 {
@@ -37,12 +37,18 @@ class PointRule
     private string $description;
     private string $functionName;
 
-    private string $table_name;
+    private static string $tableName;
 
-    public function __construct(bool $automatic = true, bool $multiAward = false, int $points = 1, string $name ="rule", string $description="", string $functionName="",int $id = 0)
+
+    public static function load(){
+        if(empty(self::$tableName)){
+            global $wpdb;
+            self::$tableName = $wpdb->prefix . 'points_rule'; 
+        }
+    }
+    public function __construct(bool $automatic = false, bool $multiAward = false, int $points = 1, string $name ="rule", string $description="", string $functionName="",int $id = 0)
     {
-        global $wpdb;
-        $this->table_name = $wpdb->prefix . 'points_rule'; // Replace with your table name
+        self::load();
         if($automatic && empty($functionName)){
             throw new Exception("misconfigured rule, function name is required for automatic rules");
         }
@@ -55,21 +61,43 @@ class PointRule
         $this->functionName = $functionName;
     }
 
+    public function getId(): int{
+        return $this->id;
+    }
+
+    public function isAutomatic(): bool{
+        return $this->automatic;
+    }
+
+    public function isMultiAward(): int{
+        return $this->multiAward;
+    }
+
+    public function getPoints(): int{
+        return $this->points;
+    }
+
+    public function getName(): string{
+        return $this->name;
+    }
+
     public function getRuleById(int $id): PointRule {
         global $wpdb;
                  
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id );
+        $tableName=self::$tableName;
+        $sql = $wpdb->prepare( "SELECT * FROM {$tableName} WHERE id = %d", $id );
         $row = $wpdb->get_row( $sql, ARRAY_A ); 
         $result = new PointRule($row['automatic'],$row['multi_award'],$row['points'],$row['name'], $row['description'],$row['function_name'], $row['id']);
         return $result;
     }
 
-    public function getAllRules(): array {
+    public static function getAllRules(): array {
+        self::load();
         global $wpdb;
-                 
+        $tableName=self::$tableName;
         // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id );
+        $sql = $wpdb->prepare( "SELECT * FROM {$tableName} ");
         $rows = $wpdb->get_results( $sql, ARRAY_A ); 
         $results = array();
         foreach ($rows as $row){
@@ -89,7 +117,8 @@ class PointRule
 
     private function createRule() {
         global $wpdb;
-        $insert_sql = "INSERT INTO {$this->table_name}
+        $tableName=self::$tableName;
+        $insert_sql = "INSERT INTO {$tableName}
                         ( `automatic`, `multi_award`, `points`, `name`, `description`, `function_name`)
                         VALUES(%d, %d, %d, %s, %s, %s);
         ";
@@ -111,8 +140,8 @@ class PointRule
 
     public function updateRule() {
         global $wpdb;
-        
-        $update_sql = "UPDATE {$this->table_name}
+        $tableName=self::$tableName;
+        $update_sql = "UPDATE {$tableName}
                         SET `automatic`=%d, `multi_award`=%d, `points`=%d, `name`=%s, `description`=%s, `function_name`=%s
                         WHERE `id`=%d;";
         $wpdb->query( $wpdb->prepare( $update_sql, (int)$this->automatic,
@@ -136,20 +165,50 @@ class PointRule
         }
     }
 
-    public function calculate(array $club, int $triggers): int{
-        if(($automatic) && ($functionName)){
-            if (function_exists($functionName)) {
+    public function isTriggered(array $club, int $triggers = 0): int{
+        if(($this->automatic) && ($this->functionName)){
+            if (function_exists($this->functionName)) {
                 try{
-                    return $functionName($club, $points);
+                    $functionName = $this->functionName;
+                    if($this->multiAward) {
+                         return $functionName($club, $triggers);
+                    } else {
+                        return $functionName($club) ? 1 : 0 ;
+                    }
+                    
                 } catch(Exception $e){
                     error_log($e->getMessage());
                 }
             } else {
-                error_log("Function '{$functionName}' does not exist.");
+                error_log("Function '{$this->functionName}' does not exist.");
             }
         } else {
-            throw new Exception($automatic?'Function name not set':'Calculate should not be invoked on manual rule');
+            throw new Exception($this->name.$this->automatic?'Function name not set':'Calculate should not be invoked on manual rule');
         }
+        return 0;
+    }
+
+    public function calculatePoints(array $club, int $triggers = 0): int{
+        if(($this->automatic) && ($this->functionName)){
+            if (function_exists($this->functionName)) {
+                try{
+                    $functionName = $this->functionName;
+                    if($this->multiAward) {
+                         return $functionName($club, $triggers) * $this->points;
+                    } else {
+                        return $functionName($club) ?? $this->points ;
+                    }
+                    
+                } catch(Exception $e){
+                    error_log($e->getMessage());
+                }
+            } else {
+                error_log("Function '{$this->functionName}' does not exist.");
+            }
+        } else {
+            throw new Exception($this->name.$this->automatic?'Function name not set':'Calculate should not be invoked on manual rule');
+        }
+        return 0;
     }
 }
 

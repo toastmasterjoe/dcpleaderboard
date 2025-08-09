@@ -56,11 +56,11 @@ function get_previous_programme_year() {
     } 
 }
 
-function build_dashboard_url_club_progress(){
-    return 'https://dashboards.toastmasters.org/'.get_programme_year().'/export.aspx?type=CSV&report=clubperformance~109~'.get_report_date().'~~'.get_programme_year();
+function build_dashboard_url_club_progress(string $district){
+    return 'https://dashboards.toastmasters.org/'.get_programme_year().'/export.aspx?type=CSV&report=clubperformance~'.$district.'~'.get_report_date().'~~'.get_programme_year();
 }
 
-function build_dashboard_previous_year_url(){
-    return 'https://dashboards.toastmasters.org/'.get_previous_programme_year().'/export.aspx?type=CSV&report=clubperformance~109~'.get_end_of_previous_year_date().'~~'.get_previous_programme_year();
+function build_dashboard_previous_year_url(string $district){
+    return 'https://dashboards.toastmasters.org/'.get_previous_programme_year().'/export.aspx?type=CSV&report=clubperformance~'.$district.'~'.get_end_of_previous_year_date().'~~'.get_previous_programme_year();
 }
 ?>

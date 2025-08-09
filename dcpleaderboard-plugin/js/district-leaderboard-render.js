@@ -3,100 +3,13 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
-function ti_status_to_category(status, defaultCategory = 'D'){
-    var mapping = new Map([ ['', 'D'], ['D', 'C'], ['S', 'B'], ['P', 'A'] ]);
-    return !mapping.has(status)? defaultCategory : mapping.get(status);
-}
-
-function calculate_category(row) {
-    const category = ti_status_to_category(row.ti_status_last_year);
-    const newCategory = ti_status_to_category(row.ti_status, 'A');
-    
-    return {
-        name: newCategory < category ? newCategory : category,
-        promoted: newCategory < category
-    };
-}
-
-function render_category(row) {
-    var category = calculate_category(row);
-    return `
-        <div class="progress-cell">
-            <div class="progress-text" >${(category.promoted ? '<span class="promotion-marker">&#9650;</span>' : '<span class="promotion-marker">&nbsp;</span>')}
-                Serie ${category.name}
-            </div>
-        </div>
-    `;
-}
-
-function populate_areas (data , $, table) {
-                    var areaSelect = $('#areaFilter');
-                    areaSelect.empty().append('<option value="">All Areas</option>');
-                    data.forEach(function (area) {
-                        areaSelect.append('<option value="' + area + '">' + area + '</option>');
-                    });
-                    table.draw();
-                }
-
-// Interpolate between #006094 and #004165
-function interpolateColor(startHex, endHex, factor) {
-    const hexToRgb = hex => [
-        parseInt(hex.slice(1, 3), 16),
-        parseInt(hex.slice(3, 5), 16),
-        parseInt(hex.slice(5, 7), 16)
-    ];
-
-    const rgbToHex = rgb => '#' + rgb.map(val => {
-        const hex = Math.round(val).toString(16);
-        return hex.length === 1 ? '0' + hex : hex;
-    }).join('');
-
-    const startRGB = hexToRgb(startHex);
-    const endRGB = hexToRgb(endHex);
-
-    const resultRGB = startRGB.map((startVal, i) =>
-        startVal + (endRGB[i] - startVal) * factor
-    );
-
-    return rgbToHex(resultRGB);
-}
-
-function table_draw($, table) {
-    var info = table.page.info();
-    var virtualRowIdx = 1;
-    // Iterate over the rows that are currently visible
-    table.rows({ page: 'current', search: 'applied' }).every(function (rowIdx) {
-        // Get the DOM node for the current row
-        var rowNode = this.node();
-
-        // Calculate the new sequential ID
-        var newId = info.start + virtualRowIdx;
-        virtualRowIdx++;
-        // Update the first cell (the ID column) with the new ID
-        switch (newId) {
-            case 1:
-                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥇');
-                break;
-            case 2:
-                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥈');
-                break;
-            case 3:
-                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥉');
-                break;
-            default:
-                $('td:eq(0)', rowNode).html(newId);
-                break;
-        }
-    });
-}
-/*
 function render_goals(data) {
     const goals = parseInt(data, 10);
     const percentage = (goals / 10) * 100;
 
 
 
-    const color = interpolateColor("#006094", "#004165", goals / 10);
+    const color = interpolateColor("#006094", "#004165", goals / 15);
     const barId = `bar-${Math.random().toString(36).slice(2, 9)}`;
     const tooltipText = `${percentage.toFixed(0)}% completed`;
 
@@ -138,6 +51,7 @@ function init_document($) {
         serverMethod: 'get',
         ajax: {
             'url': window.location.origin + '/wp-json/dcpleaderboard/v1/clubs',
+            'data': {district_mode : true},
             dataSrc: ''
         },
         columns: [
@@ -154,7 +68,7 @@ function init_document($) {
                 render: (data, type, row) => render_category(row)
             },
             {
-                data: 'goals_met',
+                data: 'district_goals_met',
                 render: (data, type, row) => render_goals(data)
             }
         ]
@@ -204,4 +118,3 @@ function init_document($) {
     table.on('draw.dt', ()=> table_draw($, table));
 
 } 
-*/

@@ -103,10 +103,12 @@ function clubs_leaderboard_endpoint_callback(WP_REST_Request $request ) {
     $items_per_page=20; // TODO decide how to make this common for shortcode and api
     
     $clubsDriver = new Clubs();
-    if( $request->has_param( 'paged' ) ) {
+    if( $request->has_param( 'page' ) ) {
+      
       $clubs = $clubsDriver->get_all_clubs_paged($items_per_page, $current_page, $division, $area);
     } else {
-      $clubs = $clubsDriver->get_all_clubs();
+      $orderByDCP = !$request->has_param( 'district_mode' );
+      $clubs = Clubs::getAllClubs($orderByDCP);
     }
     
     return rest_ensure_response( $clubs );

@@ -62,10 +62,10 @@ function award_officer_list_on_time_points(array $club):bool{
  * If award is retriggered the engine adds the new trigger to the club rule triggers
  * After recaluclation, engine retrieves triggers and re caluclates the points based on triggers.
  */
-function award_5memberpoint_points(array $club, int $triggers = 0):bool{
+function award_5memberpoint_points(array $club, int $triggers = 0) : int{
     $total_members = $club['new_members']+ $club['add_new_members'];
     $actual_triggers = intdiv($total_members,5);
-    return $actual_triggers > $triggers;
+    return $actual_triggers - $triggers;
 }
 
 ?>
