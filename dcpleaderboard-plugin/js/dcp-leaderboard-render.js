@@ -62,6 +62,23 @@ function render_goals(data) {
     `;
 }
 
+function calculate_eligibility(row) {
+    $value = row.csp.toLowerCase() === 'n' ||(row.active_members < 20 && (row.active_members - row.mem_base) < 3) ?'no' :'yes' 
+    return { eligible : $value };
+}
+
+function render_eligibility(row) {
+    var result = calculate_eligibility(row);
+    return `
+        <div class="progress-cell">
+            <div class="progress-text" >
+                ${(result.eligible === 'no' ? '☹️' : '😎')}
+            </div>
+        </div>
+    `;
+}
+
+
 function init_document($) {
     $.ajax({
         url: window.location.origin + '/wp-json/dcpleaderboard/v1/divisions',
@@ -97,8 +114,8 @@ function init_document($) {
             { data: 'club_name' },
             { data: 'ti_status' },
             {
-                data: (row, type, set) => calculate_category(row).name,
-                render: (data, type, row) => render_category(row)
+                data: (row, type, set) => calculate_eligibility(row).eligible,
+                render: (data, type, row) => render_eligibility(row)
             },
             {
                 data: 'goals_met',
@@ -110,24 +127,16 @@ function init_document($) {
     $('.dt-search input').hide();
     $('.dt-search').append($(".custom-table-filter"));
     $.fn.dataTable.ext.search.push(function (searchStr, data, index, rowData) {
-        const selectedCategory = $('#categoryFilter').val();
         const selectedDivision = $('#divisionFilter').val();
         const selectedArea = $('#areaFilter').val();
         const division = data[1];
         const area = data[2];
-        const category = calculate_category(rowData).name;
-        console.log(`is row ${category} the same as selected ${selectedCategory}`);
-        if (selectedCategory && category !== selectedCategory) return false;
         if (selectedDivision && division !== selectedDivision) return false;
         if (selectedArea && area !== selectedArea) return false;
         return true;
     });
 
     $('#areaFilter').on('change', function () {
-        table.draw();
-    });
-
-    $('#categoryFilter').on('change', function () {
         table.draw();
     });
 

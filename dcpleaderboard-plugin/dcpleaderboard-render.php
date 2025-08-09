@@ -112,15 +112,6 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <div class="custom-table-filter">
-            <label for="category">Category:</label>
-            <select id="categoryFilter" class="dt-input">
-                <option value="">All Categories</option>
-                <option value="A">Serie A</option>
-                <option value="B">Serie B</option>
-                <option value="C">Serie C</option>
-                <option value="D">Serie D</option>
-            </select>
-
             <label for="division">Division:</label>
             <select id="divisionFilter" class="dt-input">
                 <option value="">All Divisions</option>
@@ -140,9 +131,8 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
                     <th>Area</th>
                     <th>Club</th>
                     <th>Status</th>
-                    <th>Category</th>
+                    <th>Eligible</th>
                     <th>DCP Goals</th>
-                    <!--<th>-</th>-->
                 </tr>
             </thead>
         </table>
