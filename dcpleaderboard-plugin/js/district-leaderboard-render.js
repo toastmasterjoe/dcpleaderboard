@@ -151,6 +151,4 @@ function init_document($) {
 
     table.on('draw.dt', ()=> district_table_draw($, table));
 
-    //table.on('page.dt', ()=> table_draw($, table));
-
 } 
