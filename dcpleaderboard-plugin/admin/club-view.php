@@ -82,12 +82,12 @@ class Club_View_Table extends WP_List_Table {
     }
 
     public function process_bulk_action() {
-        if ($this->current_action() === 'delete' && !empty($_POST['user'])) {
+        /*if ($this->current_action() === 'delete' && !empty($_POST['user'])) {
             foreach ($_POST['user'] as $user_id) {
                 wp_delete_user($user_id);
             }
             echo '<div class="updated"><p>Selected users deleted.</p></div>';
-        }
+        }*/
     }
 
     public function prepare_items() {
