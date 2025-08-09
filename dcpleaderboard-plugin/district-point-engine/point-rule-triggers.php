@@ -84,7 +84,7 @@ class PointRuleTriggerRecord {
         $tableName = self::$tableName; 
         $clubsTableName = self::$clubsTableName;
         $sql = $wpdb->prepare( "SELECT * FROM {$tableName}
-                                WHERE club_id in (select id from  {$clubsTableName} where district = %s)",self::$district);
+                                WHERE club_id in (select id from {$clubsTableName} where district = %s) ORDER BY club_id",self::$district);
         $rows = $wpdb->get_results( $sql, ARRAY_A ); 
         $results = array();
         foreach ($rows as $row){
@@ -127,12 +127,13 @@ class PointRuleTriggers {
             if(array_key_exists($trigger->getClubNumber(), $this->triggerMap)) {
                 $clubTriggers = $this->triggerMap[$trigger->getClubNumber()];
                 if(array_key_exists($trigger->getPointRuleId(),  $clubTriggers)) {
-                    array_push($clubTriggers[$trigger->getPointRuleId()], $tigger->getClubCreatedDateTime());
+                    array_push($clubTriggers[$trigger->getPointRuleId()], $trigger->getCreatedDateTime());
                 } else {
-                    $clubTriggers +=[$trigger->getPointRuleId()=>[$trigger->getCreatedDateTime()]] ;
+                    $clubTriggers[$trigger->getPointRuleId()] = [$trigger->getCreatedDateTime()] ;
                 }
+                $this->triggerMap[$trigger->getClubNumber()] = $clubTriggers;
             } else {
-                $this->triggerMap += [$trigger->getClubNumber() => [$trigger->getPointRuleId()=>[$trigger->getCreatedDateTime()]] ];
+                $this->triggerMap[$trigger->getClubNumber()] = [$trigger->getPointRuleId()=>[$trigger->getCreatedDateTime()]] ;
             }
         }
     }
@@ -156,7 +157,7 @@ class PointRuleTriggers {
         $clubRuleTriggers = $this->triggerMap[$clubNumber];
         $triggerCounts = [];
         foreach($clubRuleTriggers as $ruleId => $triggeDates) {
-            $triggerCounts += [$ruleId => sizeOf($triggeDates)];
+            $triggerCounts[$ruleId] = sizeOf($triggeDates);
         }
         return $triggerCounts;
     }
