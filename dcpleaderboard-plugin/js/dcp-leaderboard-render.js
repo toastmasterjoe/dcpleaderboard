@@ -3,6 +3,40 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
+function dcp_table_draw($, table) {
+    var info = table.page.info();
+    var virtualRowIdx = 1;
+
+    // Iterate over the rows that are currently visible
+    table.rows({ page: 'current', search: 'applied' }).every(function (rowIdx) {
+        // Get the DOM node for the current row
+        var rowNode = this.node();
+
+        const rowData = this.data();
+        const value = rowData['goals_met']; 
+
+        // Calculate the new sequential ID
+        var newId = info.start + virtualRowIdx;
+        virtualRowIdx++;
+        // Update the first cell (the ID column) with the new ID
+        switch (newId) {
+            case 1:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥇');
+                break;
+            case 2:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥈');
+                break;
+            case 3:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥉');
+                break;
+            default:
+                $('td:eq(0)', rowNode).html(newId);
+                break;
+        }
+        $('td:eq(6)', rowNode).html(render_goals(value,rowData));
+    });
+}
+
 function render_goals(data) {
     const goals = parseInt(data, 10);
     const percentage = (goals / 10) * 100;
@@ -114,6 +148,6 @@ function init_document($) {
         }
     });
 
-    table.on('draw.dt', ()=> table_draw($, table));
+    table.on('draw.dt', ()=> dcp_table_draw($, table));
 
 } 

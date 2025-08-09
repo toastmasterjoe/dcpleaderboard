@@ -3,14 +3,15 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
-function render_goals(data) {
+function render_goals(data, row) {
+
     const goals = parseInt(data, 10);
     const percentage = (goals / 10) * 100;
 
 
 
     const color = interpolateColor("#006094", "#004165", goals / 15);
-    const barId = `bar-${Math.random().toString(36).slice(2, 9)}`;
+    const barId = `bar-${row['club_number']}`;
     const tooltipText = `${percentage.toFixed(0)}% completed`;
 
     setTimeout(() => {
@@ -26,6 +27,40 @@ function render_goals(data) {
             <div class="progress-text" >${goals}/10</div>
         </div>
     `;
+}
+
+function district_table_draw($, table) {
+    var info = table.page.info();
+    var virtualRowIdx = 1;
+
+    // Iterate over the rows that are currently visible
+    table.rows({ page: 'current', search: 'applied' }).every(function (rowIdx) {
+        // Get the DOM node for the current row
+        var rowNode = this.node();
+
+        const rowData = this.data();
+        const value = rowData['district_goals_met']; 
+
+        // Calculate the new sequential ID
+        var newId = info.start + virtualRowIdx;
+        virtualRowIdx++;
+        // Update the first cell (the ID column) with the new ID
+        switch (newId) {
+            case 1:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥇');
+                break;
+            case 2:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥈');
+                break;
+            case 3:
+                $('td:eq(0)', rowNode).html(newId + '&nbsp;🥉');
+                break;
+            default:
+                $('td:eq(0)', rowNode).html(newId);
+                break;
+        }
+        $('td:eq(6)', rowNode).html(render_goals(value,rowData));
+    });
 }
 
 function init_document($) {
@@ -47,7 +82,7 @@ function init_document($) {
         responsive: true,
         ordering: false,
         pageLength: 20,
-        lengthMenu: [10, 20, 50, 100],
+        lengthMenu: [10, 20, 50, 100, 200],
         serverMethod: 'get',
         ajax: {
             'url': window.location.origin + '/wp-json/dcpleaderboard/v1/clubs',
@@ -69,7 +104,7 @@ function init_document($) {
             },
             {
                 data: 'district_goals_met',
-                render: (data, type, row) => render_goals(data)
+                render: (data, type, row) => render_goals(data,row)
             }
         ]
     });
@@ -83,7 +118,6 @@ function init_document($) {
         const division = data[1];
         const area = data[2];
         const category = calculate_category(rowData).name;
-        console.log(`is row ${category} the same as selected ${selectedCategory}`);
         if (selectedCategory && category !== selectedCategory) return false;
         if (selectedDivision && division !== selectedDivision) return false;
         if (selectedArea && area !== selectedArea) return false;
@@ -115,6 +149,8 @@ function init_document($) {
         }
     });
 
-    table.on('draw.dt', ()=> table_draw($, table));
+    table.on('draw.dt', ()=> district_table_draw($, table));
+
+    //table.on('page.dt', ()=> table_draw($, table));
 
 } 
