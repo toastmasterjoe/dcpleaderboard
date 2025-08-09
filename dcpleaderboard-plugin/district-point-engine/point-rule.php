@@ -196,7 +196,7 @@ class PointRule
                     if($this->multiAward) {
                          return $functionName($club, $triggers) * $this->points;
                     } else {
-                        return $functionName($club) ?? $this->points ;
+                        return $functionName($club) ? $this->points : 0 ;
                     }
                     
                 } catch(Exception $e){

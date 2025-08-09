@@ -24,8 +24,8 @@ class Clubs {
     // https://g.co/gemini/share/415f9ef8785e plugin in class
     private static string $tableName = "";
     private static string $district = "";
-    public function __construct(){
-        
+
+    private static function load(){
         if(empty(self::$tableName)) {
             global $wpdb;
             self::$tableName = $wpdb->prefix . 'dcpleaderboard_clubs'; // Replace with your table name
@@ -33,6 +33,9 @@ class Clubs {
         if(empty(self::$district)){
             self::$district = get_option('dcpleaderboard_district');
         }
+    }
+    public function __construct(){
+        self::load();
     }
 
     public function get_divisions() {
@@ -66,6 +69,7 @@ class Clubs {
     }
 
     public static function getAllClubs(bool $orderByDCP = true){
+        self::load();
          //TODO: add caching;
         global $wpdb;
         
@@ -81,6 +85,44 @@ class Clubs {
         $preparedStatement = $wpdb->prepare( $sql, self::$district);
         $rows = $wpdb->get_results( $preparedStatement, OBJECT ); 
         return $rows;
+    }
+
+    public function getClubsByPageAndSearch(array $args){
+        global $wpdb;
+        $offset = $args['offset'];
+        $items_per_page = $args['number'];
+        $columns = $args['search_columns'];
+        $search_term = $args['search'];
+        
+        
+        $params = [self::$district];
+        $where = [];
+
+        if($search_term) {
+            foreach ($columns as $column) {
+                $where[] = "{$column} LIKE %s";
+                $params[] = "%{$search_term}%";
+            }
+        }
+        
+        $where_sql = 'WHERE district = %s ' . ($search_term ? 'AND ' : '') . implode(' OR ', $where);
+        
+        $tableName=self::$tableName;
+        $count_sql = "SELECT count(id) FROM {$tableName} $where_sql";
+        $total_items = $wpdb->get_var( $wpdb->prepare($count_sql, ...$params) );
+
+        $data_sql ="SELECT * FROM {$tableName} $where_sql  LIMIT %d OFFSET %d";
+        $params[] = $items_per_page;
+        $params[] = $offset;
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare($data_sql, ...$params);
+        $rows = $wpdb->get_results( $sql, OBJECT ); 
+        error_log($wpdb->last_query);
+        return (object)array (
+            "pages" => ceil( $total_items / $items_per_page ), 
+            "record_count" => $total_items,
+            "data" => $rows
+        );
     }
 
     public function get_all_clubs_paged($items_per_page, $current_page, $division, $area){
@@ -119,6 +161,7 @@ class Clubs {
             "data" => $rows
         );
     }
+
     public function upsert_all_clubs($clubs){
         foreach ($clubs as $club) {
             $foundClub = $this->get_club_by_number($club['club_number']);

@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     2.2.0
+ * Version:     2.3.0
  * Author:      Joseph Galea
  * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
@@ -39,6 +39,7 @@ define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __F
 
 
 require_once plugin_dir_path( __FILE__ ) . 'admin/options_page_register.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'admin/club-view.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti-dashboard-sync-rest-api.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti_dashboard-sync-cron.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'database-tables-setup.php'; 
@@ -80,7 +81,25 @@ add_action( 'admin_init', 'dcpleaderboard_register_settings' );
 
 function dcpleaderboard_register_settings_page() {
     add_options_page('DCP Leadearboard Settings', 'DCP Leaderboard - Settings', 'manage_options', 'dcpleaderboard', 'dcpleaderboard_options_page');
+    add_menu_page(
+        'DCP Leader Board',        // Page title
+        'DCP Leader Board',           // Menu title
+        'manage_options',        // Capability
+        'dcp-leaderboard',        // Menu slug
+        'render_dcp_leaderboard_main_admin',// Callback function
+        'dashicons-analytics', // Icon (optional)
+        2                        // Position (optional)
+    );
+    add_submenu_page(
+        'dcp-leaderboard',           // Parent slug
+        'Club View',             // Page title
+        'Club View',                  // Menu title
+        'manage_options',           // Capability
+        'club-view',          // Menu slug
+        'render_dcp_leaderboard_club_view_admin'   // Callback function
+    );
 }
+
 add_action( 'admin_menu', 'dcpleaderboard_register_settings_page' );
 add_action( 'admin_enqueue_scripts', 'dcpleaderboard_admin_enqueue_scripts' );
 

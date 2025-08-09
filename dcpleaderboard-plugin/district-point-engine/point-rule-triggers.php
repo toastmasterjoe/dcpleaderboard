@@ -146,8 +146,9 @@ class PointRuleTriggers {
 
     public function getTriggerCountOnRule($clubNumber, $ruleId) : int{
         return array_key_exists($clubNumber,$this->triggerMap) && 
-                array_key_exists($ruleId,$this->triggerMap[$clubNumber]) ??
-                   size_of($this->triggerMap[$clubNumber][$ruleId]);
+                array_key_exists($ruleId,$this->triggerMap[$clubNumber]) ?
+                   size_of($this->triggerMap[$clubNumber][$ruleId]) :
+                    0;
     }
 
     public function getAllTriggerCounts($clubNumber) : array {
