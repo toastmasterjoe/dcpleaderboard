@@ -177,7 +177,7 @@ form input[type="submit"]:hover {
 /* Status Column Special Styling */
 .modern-table-container td:last-child {
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   color: #004165; /* Loyal Blue */
 }
 
@@ -211,7 +211,7 @@ form input[type="submit"]:hover {
 
 .progress-bar {
   height: 20px;
-  width: 0px;
+  width: 0%;
   transition: width 2s ease-in-out;
 }
 

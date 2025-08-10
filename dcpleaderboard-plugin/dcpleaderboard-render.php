@@ -112,12 +112,12 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
     <div class="modern-table-container">    
         <div class="custom-table-filter">
-            <label for="division">Division:</label>
+            <label for="divisionFilter">Division:</label>
             <select id="divisionFilter" class="dt-input">
                 <option value="">All Divisions</option>
             </select>
 
-            <label for="area">Area:</label>
+            <label for="areaFilter">Area:</label>
             <select id="areaFilter" class="dt-input">
                 <option value="">All Areas</option>
             </select>
