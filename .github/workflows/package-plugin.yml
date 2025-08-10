@@ -1,4 +1,4 @@
-name: Packag
+name: Package Plugin
 
 on:
   release:
@@ -12,16 +12,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Set environment variables
+      run: |
+          echo "PLUGIN_NAME=dcpleaderboard-plugin" >> $GITHUB_ENV
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      env:
+          GITHUB_REF: ${{ github.ref }}
+
     - name: Create ZIP file
       run: |
-        PLUGIN_NAME="dcpleaderboard-plugin"
-        VERSION="${GITHUB_REF##*/}"  # Extract tag name from ref
         zip -r "${PLUGIN_NAME}-${VERSION}.zip" "${PLUGIN_NAME}" -x "*.git*" "*.github*" "*.yaml" "infrastructure"
 
     - name: Upload release asset
       uses: softprops/action-gh-release@v1
       with:
-        files: dcpleaderboard-plugin.zip
+        files: "${PLUGIN_NAME}-${VERSION}.zip"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
