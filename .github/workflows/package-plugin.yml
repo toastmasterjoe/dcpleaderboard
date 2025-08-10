@@ -5,6 +5,9 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
 
+permissions:
+  contents: write  # Enables GitHub release creation
+
 jobs:
   build:
     runs-on: ubuntu-latest
