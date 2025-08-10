@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     2.3.1
+ * Version:     2.3.3
  * Author:      Joseph Galea
  * Author URI:  https://toastmaster.joegalea.me/
  * License:     GPLv3 or later
@@ -68,12 +68,10 @@ register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {
     error_log(">>dcpleaderboard_register_settings");
-    add_option( 'dcpleaderboard_export_url', 'https://dashboards.toastmasters.org/export.aspx?type=CSV&report=clubperformance~109~1/31/2025~~2024-2025');
-    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_export_url', 'dcpleaderboard_sanitize_callback' );
     add_option( 'dcpleaderboard_district', '109');
     register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_district', 'dcpleaderboard_sanitize_callback' );
-    /*add_option( 'dcpleaderboard_division', 'A');
-    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );*/
+    add_option( 'dcpleaderboard_division', 'A');
+    register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );
     add_action( 'update_option_dcpleaderboard_district', 'dcpleaderboard_district_changed',10,3);
 
 }

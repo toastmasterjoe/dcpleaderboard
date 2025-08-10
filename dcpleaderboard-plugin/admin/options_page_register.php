@@ -34,7 +34,6 @@ function dcpleaderboard_options_page()
       // Fallback: Include the template file from your plugin's directory
       include( plugin_dir_path( __FILE__ ) . '../templates/admin/plugin-options.php' ); 
   }
-//$csv = file_get_contents(get_option('dcpleaderboard_export_url'));
 } 
 
 function dcpleaderboard_admin_enqueue_scripts() {
