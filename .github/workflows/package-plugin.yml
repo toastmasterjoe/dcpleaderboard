@@ -18,7 +18,7 @@ jobs:
 
     - name: Set environment variables
       run: |
-          echo "PLUGIN_NAME=dcpleaderboard-plugin" >> $GITHUB_ENV
+          echo "PLUGIN_NAME=dcpleaderboard" >> $GITHUB_ENV
           echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
       env:
           GITHUB_REF: ${{ github.ref }}

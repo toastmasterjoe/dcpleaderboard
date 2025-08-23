@@ -1,0 +1,14 @@
+{
+  "name": "DCP Leaderboard",
+  "slug": "dcpleaderboard",
+  "version": "2.4.0",
+  "author": "Joseph Galea",
+  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.0/dcpleaderboard-plugin-2.4.0.zip",
+  "requires": "6.6.1",
+  "tested": "6.6.1",
+  "last_updated": "2025-08-23",
+  "sections": {
+    "description": "Add DCP leaderboard to your site .",
+    "changelog": "### 2.4.0\n* Added Auto Updates\n* Bug fixes"
+  }
+}
