@@ -32,7 +32,7 @@ function dcpleaderboard_plugin_info($res, $action, $args) {
     $remote = wp_remote_get('https://raw.githubusercontent.com/toastmasterjoe/dcpleaderboard/refs/heads/main/plugin-update.json');
     if (!is_wp_error($remote) && $remote['response']['code'] === 200) {
         $data = json_decode($remote['body']);
-        return (object) [
+        return [
             'name' => $data->name,
             'slug' => $data->slug,
             'version' => $data->version,
