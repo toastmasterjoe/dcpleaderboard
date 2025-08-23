@@ -15,5 +15,5 @@
 1. If you receive a 404 not found on syncing go on permalink settings and click save again to index the rest endpoint added by the plugin
 
 # Preview how the plugin displays th two leaderboards
-- View the [district leaderboard view](https://dcpleaderboarddemo.joegalea.me/district-leaderboar-view/) shortcode `[districtleaderboard_content /]`
-- View the [DCP leaderboard view](https://dcpleaderboarddemo.joegalea.me/dcp-leaderboard-view/) shortcode `[dcpleaderboard_content /]`
+- View the [District leaderboard view](https://dcpleaderboarddemo.joegalea.me/district-leaderboar-view/){:target="_blank"} which can be displayed using the shortcode `[districtleaderboard_content /]`
+- View the [DCP leaderboard view](https://dcpleaderboarddemo.joegalea.me/dcp-leaderboard-view/){:target="_blank"} which can be displayed using the shortcode `[dcpleaderboard_content /]`
