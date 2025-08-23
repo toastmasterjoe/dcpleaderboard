@@ -1,9 +1,9 @@
 {
   "name": "DCP Leaderboard",
   "slug": "dcpleaderboard",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "author": "Joseph Galea",
-  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.0/dcpleaderboard-plugin-2.4.0.zip",
+  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.1/dcpleaderboard-plugin-2.4.1.zip",
   "requires": "6.6.1",
   "tested": "6.6.1",
   "last_updated": "2025-08-23",
