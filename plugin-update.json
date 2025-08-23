@@ -1,16 +1,16 @@
 {
   "name": "DCP Leaderboard",
   "slug": "dcpleaderboard",
-  "version": "2.4.11",
+  "version": "2.4.12",
   "author": "Joseph Galea",
   "homepage": "https://github.com/toastmasterjoe/dcpleaderboard",
-  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.11/dcpleaderboard-2.4.11.zip",
+  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.12/dcpleaderboard-2.4.12.zip",
   "requires": "6.6.1",
   "tested": "6.6.1",
   "last_updated": "2025-08-23",
   "sections": {
     "description": "Add DCP leaderboard to your site .",
-    "changelog": "### 2.4.3\n* Updated total district goals\n* Bug fixes"
+    "changelog": "### 2.4.12\n* Updated total district goals\n* Bug fixes"
   }
 
 }
