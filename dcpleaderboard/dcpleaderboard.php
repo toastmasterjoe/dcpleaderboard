@@ -50,7 +50,7 @@ require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard-render.php';
 require_once plugin_dir_path( __FILE__ ) . 'districtleaderboard-render.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
-//require_once plugin_dir_path( __FILE__ ) . 'plugin-updates.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'plugin-updates.php'; 
 
 
 
