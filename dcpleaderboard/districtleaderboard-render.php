@@ -47,7 +47,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
     wp_enqueue_script('jquery');
    
     wp_enqueue_script(
-        'bootstrap', // handle
+        'bootstrap-toasties', // handle
         plugin_dir_url(__FILE__)  . 'js/bootstrap.bundle.min.js', // script path
         array(), // dependencies
         '5.3.7', // version
@@ -57,7 +57,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
     wp_enqueue_script(
         'datatables-toasties', // handle
         plugin_dir_url(__FILE__)  . 'js/datatables.min.js', // script path
-        array('jquery', 'bootstrap'), // dependencies
+        array('jquery', 'bootstrap-toasties'), // dependencies
         '2.3.2', // version
         false // load in footer
     );
@@ -65,7 +65,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
     wp_enqueue_script(
         'leaderboard-render', // handle
         plugin_dir_url(__FILE__)  . 'js/leaderboard-render.js', // script path
-        array('jquery', 'bootstrap','datatables-toasties'), // dependencies
+        array('jquery', 'bootstrap-toasties','datatables-toasties'), // dependencies
         '1.0.0', // version
         false // do not load in footer
     );
@@ -73,7 +73,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
     wp_enqueue_script(
         'district-leaderboard-render', // handle
         plugin_dir_url(__FILE__)  . 'js/district-leaderboard-render.js', // script path
-        array('jquery', 'bootstrap','datatables-toasties'), // dependencies
+        array('jquery', 'bootstrap-toasties','datatables-toasties'), // dependencies
         '1.0.0', // version
         false // do not load in footer
     );
