@@ -51,7 +51,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
         plugin_dir_url(__FILE__)  . 'js/bootstrap.bundle.min.js', // script path
         array(), // dependencies
         '5.3.7', // version
-        true // load in footer
+        false // load in footer
     );
 
     wp_enqueue_script(
@@ -59,7 +59,7 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
         plugin_dir_url(__FILE__)  . 'js/datatables.min.js', // script path
         array('jquery', 'bootstrap'), // dependencies
         '2.3.2', // version
-        true // load in footer
+        false // load in footer
     );
 
     wp_enqueue_script(

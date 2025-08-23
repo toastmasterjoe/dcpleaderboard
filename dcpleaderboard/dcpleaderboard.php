@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name:         DCP Leaderboard
- * Plugin URI:          https://github.com/toastmasterjoe/dcpleaderboard
- * Update URI:          
- * Description:         A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:             2.4.0
- * Author:              Joseph Galea
- * Author URI:          https://toastmaster.joegalea.me/
- * License:             GPLv3 or later
- * Requires PHP:        7.4
- * Requires at least:   6.6.1
- * Text Domain:         Gamify DCP in your district through the DCP Leaderboard
+ * Plugin Name: DCP Leaderboard
+ * Plugin URI: https://github.com/toastmasterjoe/dcpleaderboard
+ * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
+ * Version: 2.4.1
+ * Update URI: https://raw.githubusercontent.com/toastmasterjoe/dcpleaderboard/refs/heads/main/plugin-update.json
+ * Author: Joseph Galea
+ * Author URI: https://toastmaster.joegalea.me/
+ * License: GPLv3 or later
+ * Requires PHP: 7.4
+ * Requires at least: 6.6.1
+ * Text Domain: dcpleaderboard
  */
 
 /*
@@ -50,7 +50,9 @@ require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard-render.php';
 require_once plugin_dir_path( __FILE__ ) . 'districtleaderboard-render.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
-require plugin_dir_path( __FILE__ ) . 'plugin-updates.php'; 
+//require_once plugin_dir_path( __FILE__ ) . 'plugin-updates.php'; 
+
+
 
 function wp_dcpleaderboard_activate(){
     wp_dcpleaderboard_install_db();
@@ -76,7 +78,6 @@ function dcpleaderboard_register_settings() {
     add_option( 'dcpleaderboard_division', 'A');
     register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_division', 'dcpleaderboard_santize_callback' );
     add_action( 'update_option_dcpleaderboard_district', 'dcpleaderboard_district_changed',10,3);
-
 }
 add_action( 'admin_init', 'dcpleaderboard_register_settings' );
 
@@ -124,4 +125,7 @@ function dcpleaderboard_enqueue_scripts() {
     //wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'js/my-script.min.js', array('jquery'), null, true);
 }
 add_action('wp_enqueue_scripts', 'dcpleaderboard_enqueue_scripts');
+
+
+
 ?>

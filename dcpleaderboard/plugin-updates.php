@@ -1,26 +1,26 @@
 <?php
+add_filter('auto_update_plugin', function($update, $item) {
+    return  ($item->id === 'dcpleaderboard/dcpleaderboard.php') ? true : $update;
+}, 10, 2);
 
 add_filter('pre_set_site_transient_update_plugins', 'dcpleaderboard_check_for_plugin_update');
 function dcpleaderboard_check_for_plugin_update($transient) {
-    
-    error_log('dcpleaderboard_check_for_plugin_update>>'.print_r($transient, true));
-    if (empty($transient->checked)) return $transient;
 
-    $plugin_slug = plugin_basename(__FILE__);
+    $plugin_file = 'dcpleaderboard/dcpleaderboard.php';
+
     $remote = wp_remote_get('https://raw.githubusercontent.com/toastmasterjoe/dcpleaderboard/refs/heads/main/plugin-update.json');
-
     if (!is_wp_error($remote) && $remote['response']['code'] === 200) {
         $data = json_decode($remote['body']);
-        if (version_compare($transient->checked[$plugin_slug], $data->version, '<')) {
-            $transient->response[$plugin_slug] = (object) [
-                'slug' => $data->slug,
+        if (version_compare($transient->checked[$plugin_file], $data->version, '<')) {
+            $transient->response[$plugin_file] = (object)[
+                'slug' => 'dcpleaderboard',
                 'new_version' => $data->version,
                 'package' => $data->download_url,
                 'url' => $data->homepage ?? ''
             ];
         }
     }
-
+    error_log($transient);
     return $transient;
 }
 
@@ -45,10 +45,7 @@ function dcpleaderboard_plugin_info($res, $action, $args) {
     return $res;
 }
 
-add_filter('auto_update_plugin', function($update, $item) {
-    error_log($item->slug);
-    return ($item->slug === 'dcpleaderboard') ? true : $update;
-}, 10, 2);
+
 
 
 ?>
