@@ -11,6 +11,7 @@ function dcpleaderboard_check_for_plugin_update($transient) {
     $remote = wp_remote_get('https://raw.githubusercontent.com/toastmasterjoe/dcpleaderboard/refs/heads/main/plugin-update.json');
     if (!is_wp_error($remote) && $remote['response']['code'] === 200) {
         $data = json_decode($remote['body']);
+        error_log($transient->checked[$plugin_file]);
         if (version_compare($transient->checked[$plugin_file], $data->version, '<')) {
             $transient->response[$plugin_file] = (object)[
                 'slug' => 'dcpleaderboard',
@@ -20,7 +21,7 @@ function dcpleaderboard_check_for_plugin_update($transient) {
             ];
         }
     }
-    error_log($transient);
+    error_log(print_r($transient,true));
     return $transient;
 }
 

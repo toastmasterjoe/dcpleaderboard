@@ -55,7 +55,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     );
 
     wp_enqueue_script(
-        'datatables', // handle
+        'datatables-dcp', // handle
         plugin_dir_url(__FILE__)  . 'js/datatables.min.js', // script path
         array('jquery', 'bootstrap'), // dependencies
         '2.3.2', // version
@@ -65,7 +65,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
      wp_enqueue_script(
         'leaderboard-render', // handle
         plugin_dir_url(__FILE__)  . 'js/leaderboard-render.js', // script path
-        array('jquery', 'bootstrap','datatables'), // dependencies
+        array('jquery', 'bootstrap','datatables-dcp'), // dependencies
         '1.0.0', // version
         false // do not load in footer
     );
@@ -73,7 +73,7 @@ function dcpleaderboard_content_shortcode_callback($atts, $content = null) {
     wp_enqueue_script(
         'dcp-leaderboard-render', // handle
         plugin_dir_url(__FILE__)  . 'js/dcp-leaderboard-render.js', // script path
-        array('jquery', 'bootstrap','datatables'), // dependencies
+        array('jquery', 'bootstrap','datatables-dcp'), // dependencies
         '1.0.0', // version
         false // do not load in footer
     );
