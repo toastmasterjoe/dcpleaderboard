@@ -1,7 +1,7 @@
 <?php
-add_filter('auto_update_plugin', function($update, $item) {
+/*add_filter('auto_update_plugin', function($update, $item) {
     return  ($item->id === 'dcpleaderboard/dcpleaderboard.php') ? true : $update;
-}, 10, 2);
+}, 10, 2);*/
 
 add_filter('pre_set_site_transient_update_plugins', 'dcpleaderboard_check_for_plugin_update');
 function dcpleaderboard_check_for_plugin_update($transient) {
