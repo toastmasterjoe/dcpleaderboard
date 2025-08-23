@@ -12,7 +12,7 @@ function dcpleaderboard_check_for_plugin_update($transient) {
     if (!is_wp_error($remote) && $remote['response']['code'] === 200) {
         $data = json_decode($remote['body']);
        
-        if (!$transient->checked||
+        if (!property_exists($transient, 'checked') ||
                 !array_key_exists($plugin_file,$transient->checked)||
                 version_compare($transient->checked[$plugin_file], $data->version, '<')) {
             $transient->response[$plugin_file] = (object)[
