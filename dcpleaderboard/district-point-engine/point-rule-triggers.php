@@ -49,12 +49,12 @@ class PointRuleTriggerRecord {
         }
     }
 
-    public function __construct(int $pointRuleId, int $clubDbId,string $clubNumber, DateTimeInterface $createdDate = new DateTimeImmutable(), $id=0) {
+    public function __construct(int $pointRuleId, int $clubDbId,string $clubNumber, DateTimeInterface $createdDate=null, $id=0) {
         self::load();
         $this->pointRuleId = $pointRuleId;
         $this->clubDbId = $clubDbId;
         $this->clubNumber = $clubNumber;
-        $this->createdDate = $createdDate;
+        $this->createdDate = $createdDate??= new DateTimeImmutable();
         $this->id = $id;
     }
 

@@ -11,7 +11,7 @@ services:
       pdb:
         condition: service_healthy
     volumes:
-      - ./dcpleaderboard-plugin/:/var/www/html/wp-content/plugins/dcpleaderboard
+      - ./dcpleaderboard/:/var/www/html/wp-content/plugins/dcpleaderboard
     entrypoint: /bin/bash -c "/usr/bin/install_wp.sh"
     
 
@@ -47,7 +47,7 @@ services:
       sdb:
         condition: service_healthy
     volumes:
-      - ./dcpleaderboard-plugin/:/var/www/html/wp-content/plugins/dcpleaderboard
+      - ./dcpleaderboard/:/var/www/html/wp-content/plugins/dcpleaderboard
     entrypoint: /bin/bash -c "/usr/bin/install_wp.sh"
 
   sdb:

@@ -1,13 +1,16 @@
 <?php
 /**
- * Plugin Name: DCP Leaderboard
- * Plugin URI:  https://github.com/toastmasterjoe/dcpleaderboard
- * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version:     2.3.4
- * Author:      Joseph Galea
- * Author URI:  https://toastmaster.joegalea.me/
- * License:     GPLv3 or later
- * Text Domain: dcpleaderboard-plugin
+ * Plugin Name:         DCP Leaderboard
+ * Plugin URI:          https://github.com/toastmasterjoe/dcpleaderboard
+ * Update URI:          
+ * Description:         A DCP leaderboard created through the toastmasters dashboard export functionality.
+ * Version:             2.4.0
+ * Author:              Joseph Galea
+ * Author URI:          https://toastmaster.joegalea.me/
+ * License:             GPLv3 or later
+ * Requires PHP:        7.4
+ * Requires at least:   6.6.1
+ * Text Domain:         Gamify DCP in your district through the DCP Leaderboard
  */
 
 /*
@@ -47,6 +50,7 @@ require_once plugin_dir_path( __FILE__ ) . 'dcpleaderboard-render.php';
 require_once plugin_dir_path( __FILE__ ) . 'districtleaderboard-render.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-render-legacy.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'leaderboard-rest-api.php'; 
+require plugin_dir_path( __FILE__ ) . 'plugin-updates.php'; 
 
 function wp_dcpleaderboard_activate(){
     wp_dcpleaderboard_install_db();
@@ -67,7 +71,6 @@ register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 
 //https://developer.wordpress.org/reference/functions/add_menu_page/
 function dcpleaderboard_register_settings() {
-    error_log(">>dcpleaderboard_register_settings");
     add_option( 'dcpleaderboard_district', '109');
     register_setting( 'dcpleaderboard_options_group', 'dcpleaderboard_district', 'dcpleaderboard_sanitize_callback' );
     add_option( 'dcpleaderboard_division', 'A');

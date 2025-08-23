@@ -1,4 +1,4 @@
-FROM wordpress:6.8.2-php8.4-apache
+FROM wordpress:6.1.1-php7.4-apache
 
 RUN apt-get update
 RUN apt-get install -y sudo 
@@ -27,7 +27,7 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 
 USER root
 RUN chmod u+x /usr/bin/install_wp.sh
-RUN wp core download --path=/var/www/html/ --allow-root 
+RUN wp core download --version=6.6.1 --path=/var/www/html/ --allow-root 
 COPY ./plugins/wp-crontrol /var/www/html/wp-content/plugins/wp-crontrol
 
 USER www-data
