@@ -6,7 +6,7 @@ it should go to Serie D
 function render_goals(data, row) {
 
     const goals = parseInt(data, 10);
-    const percentage = (goals / 10) * 100;
+    const percentage = (goals / 15) * 100;
 
 
 
@@ -24,7 +24,7 @@ function render_goals(data, row) {
             <div class="progress-container" title="${tooltipText}">
                 <div class="progress-bar" id="${barId}" style="background-color: ${color};"></div>  
             </div>
-            <div class="progress-text" >${goals}/10</div>
+            <div class="progress-text" >${goals}/15</div>
         </div>
     `;
 }
