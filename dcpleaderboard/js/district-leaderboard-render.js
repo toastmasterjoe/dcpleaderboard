@@ -81,9 +81,18 @@ function init_document($) {
         serverSide: false,
         responsive: true,
         ordering: false,
-        pageLength: 20,
+        pageLength: 200,
         lengthMenu: [10, 20, 50, 100, 200],
         serverMethod: 'get',
+        dom: '<"top-controls"lf>rt<"bottom-controls"ip>',
+        /*
+        *    l = length menu (entries per page)
+        *    f = filter (search box)
+        *    r = processing display
+        *    t = table
+        *    i = table info
+        *    p = pagination
+        */
         ajax: {
             'url': window.location.origin + '/wp-json/dcpleaderboard/v1/clubs',
             'data': {district_mode : true},

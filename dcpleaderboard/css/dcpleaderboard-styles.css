@@ -107,6 +107,11 @@ form input[type="submit"]:hover {
   margin-left:10px;
 }
 
+.custom-table-filter 
+{
+  margin-left:10px;
+}
+
 .custom-table-filter label
 {
   margin-right:5px;
@@ -225,4 +230,31 @@ form input[type="submit"]:hover {
     width: 12px;       /* Fixed width */
     text-align: right;  /* Align text to the right inside the span */
     margin-right: 5px; /* Optional spacing between label and content */
+}
+
+.top-controls,
+.bottom-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 16px; /* Adjust spacing between length and search */
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+
+.top-controls .dataTables_length,
+.top-controls .dataTables_filter {
+  display: block;
+}
+
+.dataTables_length {
+  align-self: flex-start;
+}
+
+.dataTables_filter {
+  align-self: flex-end;
+}
+
+.filter-block {
+  margin-bottom:5px;
 }

@@ -101,6 +101,7 @@ function init_document($) {
         ordering: false,
         pageLength: 20,
         lengthMenu: [10, 20, 50, 100],
+        dom: '<"top-controls"lf>rt<"bottom-controls"ip>',
         serverMethod: 'get',
         ajax: {
             'url': window.location.origin + '/wp-json/dcpleaderboard/v1/clubs',
