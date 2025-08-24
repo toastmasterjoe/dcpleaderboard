@@ -232,14 +232,22 @@ form input[type="submit"]:hover {
     margin-right: 5px; /* Optional spacing between label and content */
 }
 
-.top-controls,
-.bottom-controls {
+.top-controls {
   display: flex;
   flex-direction: row;
   gap: 16px; /* Adjust spacing between length and search */
   margin-bottom: 20px;
   margin-top: 20px;
 }
+
+.bottom-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Adjust spacing between length and search */
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
 
 
 .top-controls .dataTables_length,
@@ -256,5 +264,5 @@ form input[type="submit"]:hover {
 }
 
 .filter-block {
-  margin-bottom:5px;
+  margin-bottom: 5px;
 }
