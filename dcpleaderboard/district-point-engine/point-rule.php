@@ -100,8 +100,7 @@ class PointRule
         self::load();
         global $wpdb;
         $tableName=self::$tableName;
-        // Prepared statement (Highly recommended for security):
-        $sql = $wpdb->prepare( "SELECT * FROM {$tableName} ");
+        $sql = "SELECT * FROM {$tableName}";
         $rows = $wpdb->get_results( $sql, ARRAY_A ); 
         $results = array();
         foreach ($rows as $row){
