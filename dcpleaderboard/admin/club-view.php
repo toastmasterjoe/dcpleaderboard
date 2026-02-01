@@ -63,7 +63,8 @@ class Club_View_Table extends WP_List_Table {
             'cb'    => '<input type="checkbox" />',
             'id'  => 'Id',
             'club_number' => 'Club Number',
-            'club_name' => 'Club Name'
+            'club_name' => 'Club Name',
+            'rules' => 'Rules'
         ];
     }
 
@@ -72,6 +73,10 @@ class Club_View_Table extends WP_List_Table {
     }
 
     public function column_default($item, $column_name) {
+        if ($column_name == 'rules') {
+            $url = admin_url('admin.php?page=rules-view&club_id=' . $item['id'] . '&club_number=' . urlencode($item['club_number']));
+            return '<a href="' . esc_url($url) . '">View Rules</a>';
+        }
         return $item[$column_name];
     }
 

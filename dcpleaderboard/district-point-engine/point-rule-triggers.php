@@ -78,6 +78,16 @@ class PointRuleTriggerRecord {
         return $this->createdDate;
     }
 
+    public function getTriggerCount(): int{
+        global $wpdb;
+        self::load();
+        $tableName = self::$tableName; 
+        $sql = $wpdb->prepare( "SELECT COUNT(*) FROM {$tableName}
+                                WHERE point_rule_id = %d AND club_id = %d", $this->pointRuleId, $this->clubDbId);
+        $count = $wpdb->get_var( $sql ); 
+        return intval($count);
+    }
+
     public static function getAllTiggers(): array {
         global $wpdb;
         self::load();
@@ -93,6 +103,14 @@ class PointRuleTriggerRecord {
             array_push($results, $result);
         }
         return $results;
+    }
+
+    public static function getTriggersByClubNumber(int $club_id): array {
+        global $wpdb;
+        self::load();
+        $trigger_table = self::$tableName;
+        $trigger_counts = $wpdb->get_results($wpdb->prepare("SELECT point_rule_id, COUNT(*) as count FROM $trigger_table WHERE club_id = %d GROUP BY point_rule_id", $club_id), ARRAY_A);
+        return array_column($trigger_counts, 'count', 'point_rule_id');
     }
 
     public function createTrigger() {
@@ -113,6 +131,18 @@ class PointRuleTriggerRecord {
             return $inserted_id;
         }
         return 0;
+    }
+
+    public function deleteTrigger() {
+        global $wpdb;
+        $tableName = self::$tableName;
+        $result = $wpdb->query($wpdb->prepare("DELETE FROM $tableName WHERE point_rule_id = %d AND club_id = %d LIMIT 1", $this->pointRuleId, $this->clubDbId));
+        if ($wpdb->last_error) {
+            error_log("Database delete error: " . $wpdb->last_error);
+            return false;
+        } else {
+            return $result > 0;
+        }
     }
 }
 

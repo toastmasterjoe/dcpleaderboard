@@ -43,6 +43,7 @@ define('PLUGIN_RELATIVE_PATH','/'.str_replace( ABSPATH, '', plugin_dir_path( __F
 
 require_once plugin_dir_path( __FILE__ ) . 'admin/options_page_register.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/club-view.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'admin/rules-view.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti-dashboard-sync-rest-api.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'admin/ti_dashboard-sync-cron.php'; 
 require_once plugin_dir_path( __FILE__ ) . 'database-tables-setup.php'; 
@@ -99,6 +100,14 @@ function dcpleaderboard_register_settings_page() {
         'manage_options',           // Capability
         'club-view',          // Menu slug
         'render_dcp_leaderboard_club_view_admin'   // Callback function
+    );
+    add_submenu_page(
+        'dcp-leaderboard',           // Parent slug
+        'Rules View',             // Page title
+        'Rules View',                  // Menu title
+        'manage_options',           // Capability
+        'rules-view',          // Menu slug
+        'render_dcp_leaderboard_rules_view_admin'   // Callback function
     );
 }
 

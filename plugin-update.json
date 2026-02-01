@@ -1,16 +1,16 @@
 {
   "name": "DCP Leaderboard",
   "slug": "dcpleaderboard",
-  "version": "2.4.18",
+  "version": "2.5.0",
   "author": "Joseph Galea",
   "homepage": "https://github.com/toastmasterjoe/dcpleaderboard",
-  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.4.18/dcpleaderboard-2.4.18.zip",
+  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.5.0/dcpleaderboard-2.5.0.zip",
   "requires": "6.6.1",
   "tested": "6.6.1",
   "last_updated": "2026-02-01",
   "sections": {
-    "description": "Add DCP leaderboard to your site .",
-    "changelog": "###2.4.18\n *Fixed progress bar bug*\n\n### 2.4.12\n*Updated total district goals*\n Bug fixes" 
+    "description": "Add DCP and Distric leaderboard to your site .",
+    "changelog": "###2.5.0\n *Added admin interface to trigger manual rules*\n\n###2.4.18\n *Fixed progress bar bug*\n\n### 2.4.12\n*Updated total district goals*\n Bug fixes" 
   }
 
 }

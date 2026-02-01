@@ -68,6 +68,15 @@ class Clubs {
         return $row;
     }
 
+    public function get_club_by_id($clubId){
+        global $wpdb;
+        $tableName=self::$tableName;
+        // Prepared statement (Highly recommended for security):
+        $sql = $wpdb->prepare( "SELECT * FROM {$tableName} WHERE id = %d", $clubId );
+        $row = $wpdb->get_row( $sql, ARRAY_A ); 
+        return $row;
+    }
+
     public static function getAllClubs(bool $orderByDCP = true){
         self::load();
          //TODO: add caching;

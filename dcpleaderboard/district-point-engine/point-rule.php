@@ -81,6 +81,10 @@ class PointRule
         return $this->name;
     }
 
+    public function getDescription(): string{
+        return $this->description;
+    }
+
     public function getRuleById(int $id): PointRule {
         global $wpdb;
                  
