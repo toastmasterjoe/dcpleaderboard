@@ -41,19 +41,10 @@ function render_goals(data, row) {
     const goals = parseInt(data, 10);
     const percentage = (goals / 10) * 100;
 
-
-
     const color = interpolateColor("#006094", "#004165", goals / 10);
     const barId = `bar-${row['club_number']}`;
     const tooltipText = `${percentage.toFixed(0)}% completed`;
-/*
-    setTimeout(() => {
-        const el = document.getElementById(barId);
-        if (el) {
-            el.style.width = `${percentage}%`;
-        }
-    }, 100);
-*/
+
     return `
         <div class="progress-cell">
             <div class="progress-container" title="${tooltipText}">

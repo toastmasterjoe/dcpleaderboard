@@ -6,25 +6,18 @@ it should go to Serie D
 function render_goals(data, row) {
 
     const goals = parseInt(data, 10);
-    const percentage = (goals / 15) * 100;
+    const percentage = (goals / 16) * 100;
 
-
-
-    const color = interpolateColor("#006094", "#004165", goals / 15);
+    const color = interpolateColor("#006094", "#004165", goals / 16);
     const barId = `bar-${row['club_number']}`;
     const tooltipText = `${percentage.toFixed(0)}% completed`;
-/*
-    setTimeout(() => {
-        const el = document.getElementById(barId);
-        if (el) el.style.width = `${percentage}%`;
-    }, 100);
-*/
+
     return `
         <div class="progress-cell">
             <div class="progress-container" title="${tooltipText}">
                 <div class="progress-bar" id="${barId}" style="background-color: ${color};  width: ${percentage}%"></div>  
             </div>
-            <div class="progress-text" >${goals}/15</div>
+            <div class="progress-text" >${goals}/16</div>
         </div>
     `;
 }
@@ -61,6 +54,22 @@ function district_table_draw($, table) {
         }
         $('td:eq(6)', rowNode).html(render_goals(value,rowData));
     });
+}
+
+function calculate_eligibility(row) {
+    $value = row.csp.toLowerCase() === 'n' ||(row.active_members < 20 && (row.active_members - row.mem_base) < 3) ?'no' :'yes' 
+    return { eligible : $value };
+}
+
+function render_eligibility(row) {
+    var result = calculate_eligibility(row);
+    return `
+        <div class="progress-cell">
+            <div class="progress-text" >
+                ${(result.eligible === 'no' ? '☹️' : '😎')}
+            </div>
+        </div>
+    `;
 }
 
 function init_document($) {
@@ -114,7 +123,11 @@ function init_document($) {
             {
                 data: 'district_goals_met',
                 render: (data, type, row) => render_goals(data,row)
-            }
+            },
+            {
+                data: (row, type, set) => calculate_eligibility(row).eligible,
+                render: (data, type, row) => render_eligibility(row)
+            },
         ]
     });
     $('.dt-search label').hide();
