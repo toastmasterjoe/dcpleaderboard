@@ -3,7 +3,7 @@
  * Plugin Name: DCP Leaderboard
  * Plugin URI: https://github.com/toastmasterjoe/dcpleaderboard
  * Description: A DCP leaderboard created through the toastmasters dashboard export functionality.
- * Version: 2.4.17
+ * Version: 2.4.18
  * Update URI: https://raw.githubusercontent.com/toastmasterjoe/dcpleaderboard/refs/heads/main/plugin-update.json
  * Author: Joseph Galea
  * Author URI: https://toastmaster.joegalea.me/
@@ -66,7 +66,7 @@ function wp_dcpleaderboard_deactivate(){
 register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_deactivate' );
 
 function wp_dcpleaderboard_uninstall() {
-    wp_dcpleaderboard_uninstall_db();
+    //wp_dcpleaderboard_uninstall_db();
 }
 register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 

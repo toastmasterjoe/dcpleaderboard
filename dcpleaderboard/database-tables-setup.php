@@ -126,39 +126,32 @@ function wp_dcpleaderboard_rules_trigger_create_table() {
 
 function wp_dcpleaderboard_rules_populate_table() {
     $pointRuleDriver = new PointRule();
-    if( empty($pointRuleDriver->getAllRules()) ) {
-        $level1Rule = new PointRule(true,false,1,"Achieve 4 level 1's","Educational Goals - Achieve 4 level 1's","award_level1_points");
-        $level1Rule->saveRule();
-        $level2Rule = new PointRule(true,false,1,"Achieve 2 level 2's","Educational Goals - Achieve 2 level 2's","award_level2_points");
-        $level2Rule->saveRule();
-        $addLevel2Rule = new PointRule(true,false,1,"Achieve 2 additional level 2's","Educational Goals - Achieve 2 additional level 2's","award_level2_2_points");
-        $addLevel2Rule->saveRule();
-        $level3Rule = new PointRule(true,false,1,"Achieve 2 level 3's","Educational Goals - Achieve 2 additional level 3's","award_level3_points");
-        $level3Rule->saveRule();
-        $level4_5_DTMRule = new PointRule(true,false,1,"Achieve 1 level 4, 5 or DTM","Educational Goals - Achieve 1 level 4, 5 or DTM","award_level4_5_DTM_points");
-        $level4_5_DTMRule->saveRule();
-        $addlevel4_5_DTMRule= new PointRule(true,false,1,"Achieve 1 additional level 4, 5 or DTM","Educational Goals - Achieve 1 additional level 4, 5 or DTM","award_level4_5_DTM_2_points");
-        $addlevel4_5_DTMRule->saveRule();
-        $dcpNewMembersRule=new PointRule(true,false,1,"4 new members","One point for the first 4 new memebers that a club gains","award_new_members_points");
-        $dcpNewMembersRule->saveRule();
-        $dcpAddNewMembersRule =new PointRule(true,false,1,"4 additional new members","Ths second 4 new members that a club gains, award an additional point","award_new_members_2_points");
-        $dcpAddNewMembersRule->saveRule();
-        $dcpSummerCotRule =new PointRule(true,false,1,"Summer COT Point","4 or more officers at Summer COT","award_officers_summer_cot_points");
-        $dcpSummerCotRule->saveRule();
-        $dcpWinterCotRule=new PointRule(true,false,1,"Winter COT Point","4 or more officers at Winter COT","award_officers_winter_cot_points");
-        $dcpWinterCotRule->saveRule();
-        $dcpMembershipPaymentsOnTimeRule=new PointRule(true,false,1,"One Membership Payment On Time","At least one of October or April membership payments have to be done on time","award_membership_on_time_points");
-        $dcpMembershipPaymentsOnTimeRule->saveRule();
-        $dcpOfficerListOnTimeRule=new PointRule(true,false,1,"Officer List On Time","The club submitted the officer list before the 30th June","award_officer_list_on_time_points");
-        $dcpOfficerListOnTimeRule->saveRule();
+    $existingRules = $pointRuleDriver->getAllRules();
 
-        $onePointPer5NewMembersRule=new PointRule(true,true,1,"Every 5 New Members","1 extra point for every 5 new members that a club gains","award_5memberpoint_points");
-        $onePointPer5NewMembersRule->saveRule();
+    // Define rules to be added
+    $rules = [
+        new PointRule(true,false,1,"Achieve 4 level 1's","Educational Goals - Achieve 4 level 1's","award_level1_points"),
+        new PointRule(true,false,1,"Achieve 2 level 2's","Educational Goals - Achieve 2 level 2's","award_level2_points"),
+        new PointRule(true,false,1,"Achieve 2 additional level 2's","Educational Goals - Achieve 2 additional level 2's","award_level2_2_points"),
+        new PointRule(true,false,1,"Achieve 2 level 3's","Educational Goals - Achieve 2 additional level 3's","award_level3_points"),
+        new PointRule(true,false,1,"Achieve 1 level 4, 5 or DTM","Educational Goals - Achieve 1 level 4, 5 or DTM","award_level4_5_DTM_points"),
+        new PointRule(true,false,1,"Achieve 1 additional level 4, 5 or DTM","Educational Goals - Achieve 1 additional level 4, 5 or DTM","award_level4_5_DTM_2_points"),
+        new PointRule(true,false,1,"4 new members","One point for the first 4 new members that a club gains","award_new_members_points"),
+        new PointRule(true,false,1,"4 additional new members","The second 4 new members that a club gains, award an additional point","award_new_members_2_points"),
+        new PointRule(true,false,1,"Summer COT Point","4 or more officers at Summer COT","award_officers_summer_cot_points"),
+        new PointRule(true,false,1,"Winter COT Point","4 or more officers at Winter COT","award_officers_winter_cot_points"),
+        new PointRule(true,false,1,"One Membership Payment On Time","At least one of October or April membership payments have to be done on time","award_membership_on_time_points"),
+        new PointRule(true,false,1,"Officer List On Time","The club submitted the officer list before the 30th June","award_officer_list_on_time_points"),
+        new PointRule(true,true,1,"Every 5 New Members","1 extra point for every 5 new members that a club gains","award_5memberpoint_points"),
+        new PointRule(false,true,2,"Sponsor for new club","Any club that is a sponsor for a new club"),
+        new PointRule(false,false,1,"Top club in district conference","The club that will have most participants in the district conference")
+    ];
 
-        $sponsorNewClubRule=new PointRule(false,true,2,"Sponsor for new club","Any club that is a sponsor for a new club");
-        $sponsorNewClubRule->saveRule();
-        $topDistrictConferenceParticipantsRule=new PointRule(false,false,1,"Top club in district conference","The club that will have most particpants in the district conference");
-        $topDistrictConferenceParticipantsRule->saveRule();
+    // Save missing rules
+    foreach ($rules as $rule) {
+        if (!in_array($rule->name, array_column($existingRules, 'name'))) {
+            $rule->saveRule();
+        }
     }
 }
 
