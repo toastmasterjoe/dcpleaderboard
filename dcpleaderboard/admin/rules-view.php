@@ -37,7 +37,7 @@ add_action('wp_ajax_clear_rule', 'dcpleaderboard_clear_rule');
 
 function dcpleaderboard_trigger_rule() {
     if (!current_user_can('manage_options')) {
-        wp_die('Insufficient permissions');
+        wp_send_json_error('Insufficient permissions');
     }
     check_ajax_referer('trigger_rule_nonce', 'nonce');
 
@@ -46,21 +46,21 @@ function dcpleaderboard_trigger_rule() {
     $club_number = sanitize_text_field($_POST['club_number']);
 
     if (!$rule_id || !$club_id || !$club_number) {
-        wp_die('Invalid data');
+        wp_send_json_error('Invalid data');
     }
 
     $pointRule = new PointRule();
     $rule = $pointRule->getRuleById($rule_id);
 
     if (!$rule || $rule->isAutomatic()) {
-        wp_die('Cannot trigger automatic rule');
+        wp_send_json_error('Cannot trigger automatic rule');
     }
 
     $triggerRecord = new PointRuleTriggerRecord($rule_id, $club_id, $club_number);
     // Check if already triggered if not multi_award
     if (!$rule->isMultiAward()) {
         if ($triggerRecord->getTriggerCount() > 0) {
-            wp_die('Rule already triggered for this club');
+            wp_send_json_error('Rule already triggered for this club');
         }
     }
 
@@ -68,24 +68,24 @@ function dcpleaderboard_trigger_rule() {
     $result = $triggerRecord->createTrigger();
 
     // Recalculate points for the club
-    $clubPoints = PointsEngine::reCalculatePoints([ 
-        [
-            'club_number' => $club_number
-        ]
-    ]);
+    $clubData = new Clubs();
+    $clubDataArray = $clubData->get_club_by_number($club_number);
+    // Recalculate points for the club
+    $clubPoints = PointsEngine::reCalculatePoints($clubDataArray);
+
     $clubsDriver = new Clubs();
     $clubsDriver->update_club_district_points($clubPoints);
 
     if ($result > 0) {
         wp_send_json_success('Rule triggered successfully');
     } else {
-        wp_die('Failed to trigger rule');
+        wp_send_json_error('Failed to trigger rule');
     }
 }
 
 function dcpleaderboard_clear_rule() {
     if (!current_user_can('manage_options')) {
-        wp_die('Insufficient permissions');
+        wp_send_json_error('Insufficient permissions');
     }
     check_ajax_referer('trigger_rule_nonce', 'nonce');
 
@@ -94,39 +94,38 @@ function dcpleaderboard_clear_rule() {
     $club_number = sanitize_text_field($_POST['club_number']);
 
     if (!$rule_id || !$club_id) {
-        wp_die('Invalid data');
+        wp_send_json_error('Invalid data');
     }
 
     $pointRule = new PointRule();
     $rule = $pointRule->getRuleById($rule_id);
 
     if (!$rule || $rule->isAutomatic()) {
-        wp_die('Cannot clear automatic rule');
+        wp_send_json_error('Cannot clear automatic rule');
     }
     
     // Delete one trigger 
     $triggerRecord = new PointRuleTriggerRecord($rule_id, $club_id, $club_number);
     $result = $triggerRecord->deleteTrigger();
 
+    $clubData = new Clubs();
+    $clubDataArray = $clubData->get_club_by_number($club_number);
     // Recalculate points for the club
-    $clubPoints = PointsEngine::reCalculatePoints([ 
-        [
-            'club_number' => $club_number
-        ]
-    ]);
+    $clubPoints = PointsEngine::reCalculatePoints($clubDataArray);
+
     $clubsDriver = new Clubs();
     $clubsDriver->update_club_district_points($clubPoints);
 
     if ($result !== false) {
         wp_send_json_success('Trigger cleared successfully');
     } else {
-        wp_die('Failed to clear trigger');
+        wp_send_json_error('Failed to clear trigger');
     }
 }
 
 function render_dcp_leaderboard_rules_view_admin(){
     if (!current_user_can('manage_options')) {
-        wp_die('Insufficient permissions');
+        wp_send_json_error('Insufficient permissions');
     }
     $club_id = isset($_GET['club_id']) ? intval($_GET['club_id']) : 0;
     $club_number = isset($_GET['club_number']) ? sanitize_text_field($_GET['club_number']) : '';

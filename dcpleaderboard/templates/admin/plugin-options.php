@@ -22,7 +22,6 @@
 <script src="<?php echo plugins_url('js/remote.js', __FILE__ ); ?>"></script>
 -->
 <div>
-  <?php screen_icon(); ?>
   <h2>DCP Leaderboard Settings</h2>
   <form method="post" action="options.php">
   <?php settings_fields( 'dcpleaderboard_options_group' ); ?>
