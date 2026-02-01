@@ -67,7 +67,7 @@ function wp_dcpleaderboard_deactivate(){
 register_deactivation_hook( __FILE__, 'wp_dcpleaderboard_deactivate' );
 
 function wp_dcpleaderboard_uninstall() {
-    //wp_dcpleaderboard_uninstall_db();
+    wp_dcpleaderboard_uninstall_db();
 }
 register_uninstall_hook( __FILE__, 'wp_dcpleaderboard_uninstall' );
 
