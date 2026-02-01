@@ -71,7 +71,7 @@ function dcpleaderboard_trigger_rule() {
     $clubData = new Clubs();
     $clubDataArray = $clubData->get_club_by_number($club_number);
     // Recalculate points for the club
-    $clubPoints = PointsEngine::reCalculatePoints($clubDataArray);
+    $clubPoints = PointsEngine::reCalculatePoints([$clubDataArray]);
 
     $clubsDriver = new Clubs();
     $clubsDriver->update_club_district_points($clubPoints);
@@ -111,8 +111,7 @@ function dcpleaderboard_clear_rule() {
     $clubData = new Clubs();
     $clubDataArray = $clubData->get_club_by_number($club_number);
     // Recalculate points for the club
-    $clubPoints = PointsEngine::reCalculatePoints($clubDataArray);
-
+    $clubPoints = PointsEngine::reCalculatePoints([$clubDataArray]);
     $clubsDriver = new Clubs();
     $clubsDriver->update_club_district_points($clubPoints);
 
