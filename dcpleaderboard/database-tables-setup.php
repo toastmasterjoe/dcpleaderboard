@@ -149,7 +149,7 @@ function wp_dcpleaderboard_rules_populate_table() {
 
     // Save missing rules
     foreach ($rules as $rule) {
-        if (!in_array($rule->name, array_column($existingRules, 'name'))) {
+        if (!in_array($rule->getName(), array_column($existingRules, 'name'))) {
             $rule->saveRule();
         }
     }
