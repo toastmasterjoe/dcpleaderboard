@@ -70,6 +70,9 @@ function dcpleaderboard_trigger_rule() {
     // Recalculate points for the club
     $clubData = new Clubs();
     $clubDataArray = $clubData->get_club_by_number($club_number);
+    if (!$clubDataArray) {
+        wp_send_json_error('Club not found for ' . $club_number);
+    }
     // Recalculate points for the club
     $clubPoints = PointsEngine::reCalculatePoints([$clubDataArray]);
 
@@ -110,6 +113,9 @@ function dcpleaderboard_clear_rule() {
 
     $clubData = new Clubs();
     $clubDataArray = $clubData->get_club_by_number($club_number);
+    if (!$clubDataArray) {
+        wp_send_json_error('Club not found for ' . $club_number);
+    }
     // Recalculate points for the club
     $clubPoints = PointsEngine::reCalculatePoints([$clubDataArray]);
     $clubsDriver = new Clubs();
