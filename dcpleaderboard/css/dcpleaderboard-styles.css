@@ -266,3 +266,17 @@ form input[type="submit"]:hover {
 .filter-block {
   margin-bottom: 5px;
 }
+
+table.dataTable td.child {
+  width: 100%;
+}
+
+table.dataTable td.child ul.dtr-details {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+table.dataTable td.child ul.dtr-details > li {
+  width: 100%;
+}

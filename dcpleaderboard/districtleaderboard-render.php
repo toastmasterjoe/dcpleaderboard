@@ -144,11 +144,11 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
                     <th>Division</th>
                     <th>Area</th>
                     <th>Club</th>
-                    <th>Status</th>
+                    <th>District Points</th>
                     <th>Category</th>
-                    <th>District Goals</th>
+                    <th>Status</th>
                     <th>DCP Eligible</th>
-                    <!--<th>-</th>-->
+                    <th>View Goals</th>
                 </tr>
             </thead>
         </table>
