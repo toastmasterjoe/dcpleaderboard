@@ -53,8 +53,9 @@ class PointsEngine {
                     if($rule->isMultiAward()) {
                         $triggerCount = $triggers->getTriggerCountOnRule($club['club_number'], $id);
                         $clubRecord = new Clubs();
+                        $newTriggerCount = $rule->isTriggered($club, $triggerCount);
                         $record = $clubRecord->get_club_by_number($club['club_number']);
-                        for($count = 0; $count < $triggerCount; $count++){
+                        for($count = 0; $count < $newTriggerCount; $count++){
                             $triggerRecord = new PointRuleTriggerRecord($id, $record['id'], $club['club_number']);
                             $triggerRecord->createTrigger();
                         }
