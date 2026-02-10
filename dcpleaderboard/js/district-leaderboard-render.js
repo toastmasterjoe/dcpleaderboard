@@ -175,9 +175,10 @@ function init_document($) {
         render: (data, type, row) => render_eligibility(row),
       },
       {
-        className: "details-control",
+        className: "none",
         data: null,
         render: (data, type, row) => render_goals($, row.id),
+        
       },
     ],
   });
