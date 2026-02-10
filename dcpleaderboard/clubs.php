@@ -288,7 +288,7 @@ class Clubs {
                     `district_goals_met` = %d,
                     `district_score_achieved_at` = %s
                 WHERE id = %d;";
-            $scoreAchievedAt = $foundClub['district_goals_met'] > $clubPoints || $clubPoints == 0 ? current_time('mysql') : $foundClub['district_score_achieved_at'];
+            $scoreAchievedAt = $clubPoints != $foundClub['district_goals_met'] ? current_time('mysql') : $foundClub['district_score_achieved_at'];
             $wpdb->query( $wpdb->prepare( $sql, $clubPoints, $scoreAchievedAt, $foundClub['id'])); 
     
             if ($wpdb->last_error) {
