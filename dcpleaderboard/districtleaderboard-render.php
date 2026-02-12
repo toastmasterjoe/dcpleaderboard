@@ -148,7 +148,6 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
                     <th>Category</th>
                     <th>Status</th>
                     <th>DCP Eligible</th>
-                    <th>View Goals</th>
                 </tr>
             </thead>
         </table>

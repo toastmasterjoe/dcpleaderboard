@@ -3,26 +3,25 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
-/*
-function render_goals(data, row) {
 
-    const goals = parseInt(data, 10);
-    const percentage = (goals / 16) * 100;
+function render_progress(current, max) {
 
-    const color = interpolateColor("#006094", "#004165", goals / 16);
-    const barId = `bar-${row['club_number']}`;
+    const goals = parseInt(current, 10);
+    const percentage = (goals / max) * 100;
+
+    const color = interpolateColor("#006094", "#004165", goals / max);
+    //const barId = `bar-${row['club_number']}`;
     const tooltipText = `${percentage.toFixed(0)}% completed`;
 
     return `
         <div class="progress-cell">
             <div class="progress-container" title="${tooltipText}">
-                <div class="progress-bar" id="${barId}" style="background-color: ${color};  width: ${percentage}%"></div>  
+                <div class="progress-bar" style="background-color: ${color};  width: ${percentage}%"></div>  
             </div>
-            <div class="progress-text" >${goals}/16</div>
+            <div class="progress-text" >${goals}/${max}</div>
         </div>
     `;
 }
-*/
 
 var clubIdExpanded = null;
 var clubGoalData = null;
@@ -72,8 +71,8 @@ function render_goals($, clubId) {
             <thead> 
               <tr> 
                 <th>Name</th> 
-                <th>Points</th> 
-                <th>Trigger Count</th> 
+                <th>Points Per Recurrence</th> 
+                <th>Recurrence</th> 
                 <th>Points Awarded</th> 
               </tr> 
             </thead> 
@@ -175,10 +174,59 @@ function init_document($) {
         render: (data, type, row) => render_eligibility(row),
       },
       {
+        title: "CSP Submitted:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {return row.csp == 'Y' ?"✅" : "🚫";}
+      },
+      {
+        title: "Club State:",
+        className: "none",
+        data: "club_status",
+      },
+      {
+        title: "Net Growth:",
+        className: "none",
+        data: "net_growth",
+      },
+      {
+        title: "New Members:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {return +row.new_members + +row.add_new_members},
+      },
+      {
+        title: "Retention:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          const newTotal = +row.new_members + +row.add_new_members;
+          const value =
+            ((+row.active_members - newTotal) / +row.mem_base) * 100;
+          const retention= value.toFixed(1);
+          return render_progress(retention,100);
+        },
+      },
+      {
+        title: "Total Educational Awards:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {return +row.level_1 + +row.level_2 + +row.add_level_2 + +row.level_3 + +row.level_4_5_DTM + +row.add_level_4_5_DTM},
+      },
+      {
+        title: "Training Score:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          const officers= +row.officers_round_1 + +row.officers_round_2;
+          return render_progress(officers,14);
+        },
+      },
+      {
+        title: "View",
         className: "none",
         data: null,
         render: (data, type, row) => render_goals($, row.id),
-        
       },
     ],
   });
@@ -229,10 +277,14 @@ function init_document($) {
   $("#club_leaderboard tbody").on("click", ".expandgoals", async function () {
     console.log("Expand goals clicked");
     clubIdExpanded = this.dataset.clubId;
-    const url = window.location.origin + "/wp-json/districtleaderboard/v1/club/" + clubIdExpanded + "/goals";
-    const response = await fetch(url); 
-    clubGoalData = await response.json();   
-    table.draw(); 
+    const url =
+      window.location.origin +
+      "/wp-json/districtleaderboard/v1/club/" +
+      clubIdExpanded +
+      "/goals";
+    const response = await fetch(url);
+    clubGoalData = await response.json();
+    table.draw();
   });
 
   table.on("draw.dt", () => district_table_draw($, table));
