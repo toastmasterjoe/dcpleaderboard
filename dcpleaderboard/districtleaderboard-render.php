@@ -138,18 +138,6 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
         </div>
         <h3 style="color: <?php echo $color; ?>;"><?php echo $title; ?></h3>
         <table id="club_leaderboard">
-            <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>Division</th>
-                    <th>Area</th>
-                    <th>Club</th>
-                    <th>District Points</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>DCP Eligible</th>
-                </tr>
-            </thead>
         </table>
     </div>
     <?php

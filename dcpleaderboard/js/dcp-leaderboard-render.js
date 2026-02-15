@@ -6,6 +6,8 @@ it should go to Serie D
 function dcp_table_draw($, table) {
     var info = table.page.info();
     var virtualRowIdx = 1;
+    var firstRow = true;
+    var lastGoalsMet = -1;
 
     // Iterate over the rows that are currently visible
     table.rows({ page: 'current', search: 'applied' }).every(function (rowIdx) {
@@ -13,11 +15,19 @@ function dcp_table_draw($, table) {
         var rowNode = this.node();
 
         const rowData = this.data();
-        const value = rowData['goals_met']; 
+        const goalsMet = rowData['goals_met']; 
+
+        if(firstRow){
+            lastGoalsMet = goalsMet;
+            firstRow = false;
+        }
 
         // Calculate the new sequential ID
+        if(goalsMet !== lastGoalsMet){
+            lastGoalsMet = goalsMet;
+            virtualRowIdx++;
+        }
         var newId = info.start + virtualRowIdx;
-        virtualRowIdx++;
         // Update the first cell (the ID column) with the new ID
         switch (newId) {
             case 1:
@@ -33,7 +43,7 @@ function dcp_table_draw($, table) {
                 $('td:eq(0)', rowNode).html(newId);
                 break;
         }
-        $('td:eq(6)', rowNode).html(render_goals(value,rowData));
+        $('td:eq(6)', rowNode).html(render_goals(goalsMet,rowData));
     });
 }
 
