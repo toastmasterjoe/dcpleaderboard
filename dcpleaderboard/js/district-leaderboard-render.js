@@ -105,6 +105,26 @@ function render_goals($, clubId) {
           data: "points_awarded",
         },
       ],
+      headerCallback: function (thead, data, start, end, display) {
+        let api = this.api();
+        api.columns().every(function () {
+          let colIdx = this.index();
+          let colDef = this.settings()[0].aoColumns[colIdx];
+          if (!colDef.tooltipText) return;
+          let th = $(thead).find("th").eq(colIdx); // Avoid duplicating icons on redraw
+          if (th.find(".info-icon").length === 0) {
+            let title = th.text().trim();
+            th.html(
+              ` <span class="header-with-icon"> ${title} <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="${colDef.tooltipText}"> ℹ️ </span> </span> `,
+            );
+          }
+        });
+        // Activate Bootstrap tooltips
+        const tooltipTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+        );
+        tooltipTriggerList.map((el) => new bootstrap.Tooltip(el));
+      },
     });
     return ` 
         <div class="nested-wrapper"> 
@@ -205,8 +225,7 @@ function init_document($) {
       },
       {
         title: "Category",
-        tooltipText:
-          "Club category based on last year and this year DCP status",
+        tooltipText: "Category based on last year's &amp; this year's DCP status. Refer to legend for details.",
         data: (row, type, set) => calculate_category(row).name,
         render: (data, type, row) => render_category(row),
       },
@@ -293,6 +312,29 @@ function init_document($) {
         render: (data, type, row) => render_goals($, row.id),
       },
     ],
+    headerCallback: function (thead, data, start, end, display) {
+      let api = this.api();
+      api.columns().every(function () {
+        let colIdx = this.index();
+        let colDef = this.settings()[0].aoColumns[colIdx];
+        if (!colDef.tooltipText) return;
+        let th = $(thead).find("th").eq(colIdx); // Avoid duplicating icons on redraw
+        if (th.find(".info-icon").length === 0) {
+          let title = th.text().trim();
+          th.html(
+            ` <span class="header-with-icon"> ${title} <span class="info-icon" 
+              data-bs-toggle="tooltip" 
+              data-bs-placement="top"
+              title="${colDef.tooltipText}"> ℹ️ </span> </span> `,
+          );
+        }
+      });
+      // Activate Bootstrap tooltips
+      const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      tooltipTriggerList.map((el) => new bootstrap.Tooltip(el));
+    },
   });
   $(".dt-search label").hide();
   $(".dt-search input").hide();
