@@ -79,7 +79,6 @@ function render_goals($, clubId) {
           <table class="goals-nested-table display compact" width="100%"> 
           </table>`);
     const dt = tableGoals.DataTable({
-      fixedHeader: true,
       paging: false,
       searching: false,
       info: false,
