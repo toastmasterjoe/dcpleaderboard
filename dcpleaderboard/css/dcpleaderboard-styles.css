@@ -238,6 +238,11 @@ form input[type="submit"]:hover {
   gap: 16px; /* Adjust spacing between length and search */
   margin-bottom: 20px;
   margin-top: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 2000; /* sit above DataTables FixedHeader clone */
+  background-color: #F5F5F5; /* match filter background */
+  padding: 0.5rem 1rem;
 }
 
 .bottom-controls {
@@ -247,8 +252,6 @@ form input[type="submit"]:hover {
   margin-bottom: 20px;
   margin-top: 20px;
 }
-
-
 
 .top-controls .dataTables_length,
 .top-controls .dataTables_filter {
@@ -280,3 +283,28 @@ table.dataTable td.child ul.dtr-details {
 table.dataTable td.child ul.dtr-details > li {
   width: 100%;
 }
+
+/* Legend styling (moved from inline) */
+.leaderboard-legend {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  display: block;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.leaderboard-legend strong { display: block; margin-bottom: 8px; color: #004165; }
+.leaderboard-legend .legend-item { display: block; margin-bottom: 8px; padding: 6px 8px; border-radius: 6px; background: rgba(0,0,0,0.02); color: #222; }
+.leaderboard-legend .legend-group { display: block; margin-bottom: 8px; padding: 6px 8px; border-radius: 6px; color: #004165; background: rgba(0,0,0,0.01); }
+
+/* small circular badges for series */
+.legend-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 0.8rem; }
+.badge-a { background: #ffbf00; color: #2b2b2b; }
+.badge-b { background: #006094; }
+.badge-c { background: #2e8b57; }
+.badge-d { background: #6c757d; }
+
+/* icons inside legend groups */
+.leaderboard-legend .legend-icon { display:inline-block; min-width:20px; text-align:center; }

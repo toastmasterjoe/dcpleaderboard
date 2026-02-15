@@ -3,17 +3,15 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
-
 function render_progress(current, max) {
+  const goals = parseInt(current, 10);
+  const percentage = (goals / max) * 100;
 
-    const goals = parseInt(current, 10);
-    const percentage = (goals / max) * 100;
+  const color = interpolateColor("#006094", "#004165", goals / max);
+  //const barId = `bar-${row['club_number']}`;
+  const tooltipText = `${percentage.toFixed(0)}% completed`;
 
-    const color = interpolateColor("#006094", "#004165", goals / max);
-    //const barId = `bar-${row['club_number']}`;
-    const tooltipText = `${percentage.toFixed(0)}% completed`;
-
-    return `
+  return `
         <div class="progress-cell">
             <div class="progress-container" title="${tooltipText}">
                 <div class="progress-bar" style="background-color: ${color};  width: ${percentage}%"></div>  
@@ -26,7 +24,6 @@ function render_progress(current, max) {
 var clubIdExpanded = null;
 var clubGoalData = null;
 
-
 function district_table_draw($, table) {
   var info = table.page.info();
   var virtualRowIdx = 1;
@@ -34,40 +31,42 @@ function district_table_draw($, table) {
   var lastGoalsMet = -1;
 
   // Iterate over the rows that are currently visible
-  table.rows({ page: "current", search: "applied" }).every(function (rowIdx) {
+  table.rows({ search: "applied" }).every(function (rowIdx) {
     // Get the DOM node for the current row
-    var rowNode = this.node();
+    const rowNode = this.node();
     const rowData = this.data();
     const goalsAchieved = rowData["district_goals_met"];
-    if(firstRow){
-        lastGoalsMet = goalsAchieved;
-        firstRow = false;
+    if (firstRow) {
+      lastGoalsMet = goalsAchieved;
+      firstRow = false;
     }
 
     // Calculate the new sequential ID
-    
-    if(goalsAchieved !== lastGoalsMet){
-        lastGoalsMet = goalsAchieved;
-        virtualRowIdx++;
+
+    if (goalsAchieved !== lastGoalsMet) {
+      lastGoalsMet = goalsAchieved;
+      virtualRowIdx++;
     }
-    var newId = info.start + virtualRowIdx;
+    var newId = /*info.start +*/ virtualRowIdx;
     // Update the first cell (the ID column) with the new ID
-    switch (newId) {
-      case 1:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥇");
-        break;
-      case 2:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥈");
-        break;
-      case 3:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥉");
-        break;
-      default:
-        $("td:eq(0)", rowNode).html(newId);
-        break;
+    if (rowNode) {
+      switch (newId) {
+        case 1:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥇");
+          break;
+        case 2:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥈");
+          break;
+        case 3:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥉");
+          break;
+        default:
+          $("td:eq(0)", rowNode).html(newId);
+          break;
+      }
     }
     //$('td:eq(6)', rowNode).html(render_goals(goalsAchieved,rowData));
-    $("td:eq(8)", rowNode).html(render_goals($, rowData.id));
+    //$("td:eq(8)", rowNode).html(render_goals($, rowData.id));
   });
 }
 
@@ -85,25 +84,25 @@ function render_goals($, clubId) {
       ordering: false,
       data: clubGoalData,
       columns: [
-        { 
+        {
           title: "Name",
           tooltipText: "Goal description",
-          data: "name" 
+          data: "name",
         },
-        { 
+        {
           title: "Points Per Recurrence",
           tooltipText: "Points awarded per recurrence",
-          data: "points" 
+          data: "points",
         },
-        { 
+        {
           title: "Recurrence",
           tooltipText: "Number of times the goal was achieved",
-          data: "trigger_count" 
+          data: "trigger_count",
         },
-        { 
+        {
           title: "Points Awarded",
           tooltipText: "Total points awarded for the goal",
-          data: "points_awarded" 
+          data: "points_awarded",
         },
       ],
     });
@@ -149,13 +148,22 @@ function init_document($) {
   });
 
   var table = $("#club_leaderboard").DataTable({
-    fixedHeader: true,
+    // compute height of sticky top controls so FixedHeader is offset below them
+    // fallback to 0 if controls not present yet
+    fixedHeader: (function () {
+      try {
+        var h = $(".top-controls").outerHeight() || 125;
+        return { header: true, headerOffset: h };
+      } catch (e) {
+        return true;
+      }
+    })(),
     searching: true,
     processing: true,
     serverSide: false,
     responsive: true,
     ordering: false,
-    pageLength: 200,
+    pageLength: 20,
     lengthMenu: [10, 20, 50, 100, 200],
     serverMethod: "get",
     dom: '<"top-controls"lf>rt<"bottom-controls"ip>',
@@ -178,32 +186,33 @@ function init_document($) {
         data: null,
         defaultContent: "",
       },
-      { 
+      {
         title: "Division",
-        data: "division" 
+        data: "division",
       },
-      { 
+      {
         title: "Area",
-        data: "area" 
+        data: "area",
       },
-      { 
+      {
         title: "Club",
-        data: "club_name" 
+        data: "club_name",
       },
-      { 
+      {
         title: "District Points",
         tooltipText: "Points from the District Goals",
-        data: "district_goals_met" 
-      }, 
+        data: "district_goals_met",
+      },
       {
         title: "Category",
-        tooltipText: "Club category based on last year and this year DCP status",
+        tooltipText:
+          "Club category based on last year and this year DCP status",
         data: (row, type, set) => calculate_category(row).name,
         render: (data, type, row) => render_category(row),
       },
       {
-        title: "Status", 
-        data: "ti_status" 
+        title: "Status",
+        data: "ti_status",
       },
       {
         title: "DCP Eligible",
@@ -214,7 +223,9 @@ function init_document($) {
         title: "CSP Submitted:",
         className: "none",
         data: null,
-        render: (data, type, row) => {return row.csp == 'Y' ?"✅" : "🚫";}
+        render: (data, type, row) => {
+          return row.csp == "Y" ? "✅" : "🚫";
+        },
       },
       {
         title: "Club State:",
@@ -235,7 +246,9 @@ function init_document($) {
         title: "New Members:",
         className: "none",
         data: null,
-        render: (data, type, row) => {return +row.new_members + +row.add_new_members},
+        render: (data, type, row) => {
+          return +row.new_members + +row.add_new_members;
+        },
       },
       {
         title: "Retention:",
@@ -245,23 +258,32 @@ function init_document($) {
           const newTotal = +row.new_members + +row.add_new_members;
           const value =
             ((+row.active_members - newTotal) / +row.mem_base) * 100;
-          const retention= value.toFixed(1);
-          return render_progress(retention,100);
+          const retention = value.toFixed(1);
+          return render_progress(retention, 100);
         },
       },
       {
         title: "Total Educational Awards:",
         className: "none",
         data: null,
-        render: (data, type, row) => {return +row.level_1 + +row.level_2 + +row.add_level_2 + +row.level_3 + +row.level_4_5_DTM + +row.add_level_4_5_DTM},
+        render: (data, type, row) => {
+          return (
+            +row.level_1 +
+            +row.level_2 +
+            +row.add_level_2 +
+            +row.level_3 +
+            +row.level_4_5_DTM +
+            +row.add_level_4_5_DTM
+          );
+        },
       },
       {
         title: "Training Score:",
         className: "none",
         data: null,
         render: (data, type, row) => {
-          const officers= +row.officers_round_1 + +row.officers_round_2;
-          return render_progress(officers,14);
+          const officers = +row.officers_round_1 + +row.officers_round_2;
+          return render_progress(officers, 14);
         },
       },
       {
