@@ -3,26 +3,23 @@ if the record has no value in last year status and in this years status
 it should go to Serie D
 */
 
-/*
-function render_goals(data, row) {
+function render_progress(current, max) {
+  const goals = parseInt(current, 10);
+  const percentage = (goals / max) * 100;
 
-    const goals = parseInt(data, 10);
-    const percentage = (goals / 16) * 100;
+  const color = interpolateColor("#006094", "#004165", goals / max);
+  //const barId = `bar-${row['club_number']}`;
+  const tooltipText = `${percentage.toFixed(0)}% completed`;
 
-    const color = interpolateColor("#006094", "#004165", goals / 16);
-    const barId = `bar-${row['club_number']}`;
-    const tooltipText = `${percentage.toFixed(0)}% completed`;
-
-    return `
+  return `
         <div class="progress-cell">
             <div class="progress-container" title="${tooltipText}">
-                <div class="progress-bar" id="${barId}" style="background-color: ${color};  width: ${percentage}%"></div>  
+                <div class="progress-bar" style="background-color: ${color};  width: ${percentage}%"></div>  
             </div>
-            <div class="progress-text" >${goals}/16</div>
+            <div class="progress-text" >${goals}/${max}</div>
         </div>
     `;
 }
-*/
 
 var clubIdExpanded = null;
 var clubGoalData = null;
@@ -30,36 +27,46 @@ var clubGoalData = null;
 function district_table_draw($, table) {
   var info = table.page.info();
   var virtualRowIdx = 1;
+  var firstRow = true;
+  var lastGoalsMet = -1;
 
   // Iterate over the rows that are currently visible
-  table.rows({ page: "current", search: "applied" }).every(function (rowIdx) {
+  table.rows({ search: "applied" }).every(function (rowIdx) {
     // Get the DOM node for the current row
-    var rowNode = this.node();
-
+    const rowNode = this.node();
     const rowData = this.data();
     const goalsAchieved = rowData["district_goals_met"];
-    const clubId = rowData["id"];
+    if (firstRow) {
+      lastGoalsMet = goalsAchieved;
+      firstRow = false;
+    }
 
     // Calculate the new sequential ID
-    var newId = info.start + virtualRowIdx;
-    virtualRowIdx++;
+
+    if (goalsAchieved !== lastGoalsMet) {
+      lastGoalsMet = goalsAchieved;
+      virtualRowIdx++;
+    }
+    var newId = /*info.start +*/ virtualRowIdx;
     // Update the first cell (the ID column) with the new ID
-    switch (newId) {
-      case 1:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥇");
-        break;
-      case 2:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥈");
-        break;
-      case 3:
-        $("td:eq(0)", rowNode).html(newId + "&nbsp;🥉");
-        break;
-      default:
-        $("td:eq(0)", rowNode).html(newId);
-        break;
+    if (rowNode) {
+      switch (newId) {
+        case 1:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥇");
+          break;
+        case 2:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥈");
+          break;
+        case 3:
+          $("td:eq(0)", rowNode).html(newId + "&nbsp;🥉");
+          break;
+        default:
+          $("td:eq(0)", rowNode).html(newId);
+          break;
+      }
     }
     //$('td:eq(6)', rowNode).html(render_goals(goalsAchieved,rowData));
-    $("td:eq(8)", rowNode).html(render_goals($, rowData.id));
+    //$("td:eq(8)", rowNode).html(render_goals($, rowData.id));
   });
 }
 
@@ -69,15 +76,6 @@ function render_goals($, clubId) {
   } else {
     const tableGoals = $(`
           <table class="goals-nested-table display compact" width="100%"> 
-            <thead> 
-              <tr> 
-                <th>Name</th> 
-                <th>Points</th> 
-                <th>Trigger Count</th> 
-                <th>Points Awarded</th> 
-              </tr> 
-            </thead> 
-            <tbody></tbody> 
           </table>`);
     const dt = tableGoals.DataTable({
       paging: false,
@@ -86,10 +84,26 @@ function render_goals($, clubId) {
       ordering: false,
       data: clubGoalData,
       columns: [
-        { data: "name" },
-        { data: "points" },
-        { data: "trigger_count" },
-        { data: "points_awarded" },
+        {
+          title: "Name",
+          tooltipText: "Goal description",
+          data: "name",
+        },
+        {
+          title: "Points Per Recurrence",
+          tooltipText: "Points awarded per recurrence",
+          data: "points",
+        },
+        {
+          title: "Recurrence",
+          tooltipText: "Number of times the goal was achieved",
+          data: "trigger_count",
+        },
+        {
+          title: "Points Awarded",
+          tooltipText: "Total points awarded for the goal",
+          data: "points_awarded",
+        },
       ],
     });
     return ` 
@@ -134,6 +148,16 @@ function init_document($) {
   });
 
   var table = $("#club_leaderboard").DataTable({
+    // compute height of sticky top controls so FixedHeader is offset below them
+    // fallback to 0 if controls not present yet
+    fixedHeader: (function () {
+      try {
+        var h = $(".top-controls").outerHeight() || 125;
+        return { header: true, headerOffset: h };
+      } catch (e) {
+        return true;
+      }
+    })(),
     searching: true,
     processing: true,
     serverSide: false,
@@ -158,27 +182,115 @@ function init_document($) {
     },
     columns: [
       {
+        title: "Position",
         data: null,
         defaultContent: "",
       },
-      { data: "division" },
-      { data: "area" },
-      { data: "club_name" },
-      { data: "district_goals_met" },
       {
+        title: "Division",
+        data: "division",
+      },
+      {
+        title: "Area",
+        data: "area",
+      },
+      {
+        title: "Club",
+        data: "club_name",
+      },
+      {
+        title: "District Points",
+        tooltipText: "Points from the District Goals",
+        data: "district_goals_met",
+      },
+      {
+        title: "Category",
+        tooltipText:
+          "Club category based on last year and this year DCP status",
         data: (row, type, set) => calculate_category(row).name,
         render: (data, type, row) => render_category(row),
       },
-      { data: "ti_status" },
       {
+        title: "Status",
+        data: "ti_status",
+      },
+      {
+        title: "DCP Eligible",
         data: (row, type, set) => calculate_eligibility(row).eligible,
         render: (data, type, row) => render_eligibility(row),
       },
       {
+        title: "CSP Submitted:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          return row.csp == "Y" ? "✅" : "🚫";
+        },
+      },
+      {
+        title: "Club State:",
+        className: "none",
+        data: "club_status",
+      },
+      {
+        title: "Active Members:",
+        className: "none",
+        data: "active_members",
+      },
+      {
+        title: "Net Growth:",
+        className: "none",
+        data: "net_growth",
+      },
+      {
+        title: "New Members:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          return +row.new_members + +row.add_new_members;
+        },
+      },
+      {
+        title: "Retention:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          const newTotal = +row.new_members + +row.add_new_members;
+          const value =
+            ((+row.active_members - newTotal) / +row.mem_base) * 100;
+          const retention = value.toFixed(1);
+          return render_progress(retention, 100);
+        },
+      },
+      {
+        title: "Total Educational Awards:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          return (
+            +row.level_1 +
+            +row.level_2 +
+            +row.add_level_2 +
+            +row.level_3 +
+            +row.level_4_5_DTM +
+            +row.add_level_4_5_DTM
+          );
+        },
+      },
+      {
+        title: "Training Score:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          const officers = +row.officers_round_1 + +row.officers_round_2;
+          return render_progress(officers, 14);
+        },
+      },
+      {
+        title: "View",
         className: "none",
         data: null,
         render: (data, type, row) => render_goals($, row.id),
-        
       },
     ],
   });
@@ -229,10 +341,14 @@ function init_document($) {
   $("#club_leaderboard tbody").on("click", ".expandgoals", async function () {
     console.log("Expand goals clicked");
     clubIdExpanded = this.dataset.clubId;
-    const url = window.location.origin + "/wp-json/districtleaderboard/v1/club/" + clubIdExpanded + "/goals";
-    const response = await fetch(url); 
-    clubGoalData = await response.json();   
-    table.draw(); 
+    const url =
+      window.location.origin +
+      "/wp-json/districtleaderboard/v1/club/" +
+      clubIdExpanded +
+      "/goals";
+    const response = await fetch(url);
+    clubGoalData = await response.json();
+    table.draw();
   });
 
   table.on("draw.dt", () => district_table_draw($, table));

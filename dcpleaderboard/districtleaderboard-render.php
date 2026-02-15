@@ -1,5 +1,5 @@
 <?php
-/*
+    /*
  * DCP Leaderboard Plugin
  * Copyright (C) 2025 Joseph Galea
  *
@@ -17,15 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Exit if accessed directly to prevent direct access to the file.
-if ( ! defined( 'ABSPATH' ) ) {
+    // Exit if accessed directly to prevent direct access to the file.
+    if (! defined('ABSPATH')) {
     exit;
-}
+    }
 
-require_once plugin_dir_path( __FILE__ ) . 'clubs.php'; 
+    require_once plugin_dir_path(__FILE__) . 'clubs.php';
 
-
-/**
+    /**
  * Callback function for the `dcpleaderboard_content` shortcode.
  * This function generates the content that will be embedded.
  *
@@ -33,72 +32,79 @@ require_once plugin_dir_path( __FILE__ ) . 'clubs.php';
  * @param string $content Content enclosed within the shortcode tags (if any).
  * @return string The HTML content to display.
  */
-function districtleaderboard_content_shortcode_callback($atts, $content = null) {
+    function districtleaderboard_content_shortcode_callback($atts, $content = null)
+    {
     // Define default attributes for the shortcode
     $atts = shortcode_atts(
-        array(
-            'title' => 'District Leaderboard',
-            'color' => '#004165',
+        [
+            'title'          => 'District Leaderboard',
+            'color'          => '#004165',
             'items_per_page' => 20,
-        ),
+        ],
         $atts,
         'districtleaderboard_content'
     );
     wp_enqueue_script('jquery');
-   
+
     wp_enqueue_script(
-        'bootstrap-toasties', // handle
-        plugin_dir_url(__FILE__)  . 'js/bootstrap.bundle.min.js', // script path
-        array(), // dependencies
-        '5.3.7', // version
-        false // load in footer
+        'bootstrap-toasties',                                    // handle
+        plugin_dir_url(__FILE__) . 'js/bootstrap.bundle.min.js', // script path
+        [],                                                      // dependencies
+        '5.3.7',                                                 // version
+        false                                                    // load in footer
     );
 
     wp_enqueue_script(
-        'datatables-toasties', // handle
-        plugin_dir_url(__FILE__)  . 'js/datatables.min.js', // script path
-        array('jquery', 'bootstrap-toasties'), // dependencies
-        '2.3.2', // version
-        false // load in footer
+        'datatables-toasties',                             // handle
+        plugin_dir_url(__FILE__) . 'js/datatables.min.js', // script path
+        ['jquery', 'bootstrap-toasties'],                  // dependencies
+        '2.3.2',                                           // version
+        false                                              // load in footer
     );
 
     wp_enqueue_script(
-        'leaderboard-render', // handle
-        plugin_dir_url(__FILE__)  . 'js/leaderboard-render.js', // script path
-        array('jquery', 'bootstrap-toasties','datatables-toasties'), // dependencies
-        '1.0.0', // version
-        false // do not load in footer
+        'datatables-fixedheader-toasties',                             // handle
+        plugin_dir_url(__FILE__) . 'js/dataTables.fixedHeader.min.js', // script path
+        ['jquery', 'bootstrap-toasties', 'datatables-toasties'],       // dependencies
+        '2.3.2',                                                       // version
+        false                                                          // load in footer
     );
 
     wp_enqueue_script(
-        'district-leaderboard-render', // handle
-        plugin_dir_url(__FILE__)  . 'js/district-leaderboard-render.js', // script path
-        array('jquery', 'bootstrap-toasties','datatables-toasties'), // dependencies
-        '1.0.0', // version
-        false // do not load in footer
+        'leaderboard-render',                                                                       // handle
+        plugin_dir_url(__FILE__) . 'js/leaderboard-render.js',                                      // script path
+        ['jquery', 'bootstrap-toasties', 'datatables-toasties', 'datatables-fixedheader-toasties'], // dependencies
+        '1.0.0',                                                                                    // version
+        false                                                                                       // do not load in footer
     );
 
+    wp_enqueue_script(
+        'district-leaderboard-render',                                                              // handle
+        plugin_dir_url(__FILE__) . 'js/district-leaderboard-render.js',                             // script path
+        ['jquery', 'bootstrap-toasties', 'datatables-toasties', 'datatables-fixedheader-toasties'], // dependencies
+        '1.0.0',                                                                                    // version
+        false                                                                                       // do not load in footer
+    );
 
     wp_enqueue_style(
-        'bootstrap', // Handle name
+        'bootstrap',                                       // Handle name
         plugin_dir_url(__FILE__) . 'css/bootstrap.min.css' // Path to the file
     );
 
     wp_enqueue_style(
-        'datatables', // Handle name
+        'datatables',                                       // Handle name
         plugin_dir_url(__FILE__) . 'css/datatables.min.css' // Path to the file
     );
 
     wp_enqueue_style(
-        'dcpleaderboard-style', // Handle name
+        'datatables-fixedheader',                                       // Handle name
+        plugin_dir_url(__FILE__) . 'css/fixedHeader.dataTables.min.css' // Path to the file
+    );
+
+    wp_enqueue_style(
+        'dcpleaderboard-style',                                    // Handle name
         plugin_dir_url(__FILE__) . 'css/dcpleaderboard-styles.css' // Path to the file
     );
-    
-    // Handle filters
-    /*$division = isset($_GET['division']) ? sanitize_text_field($_GET['division']) : '';
-    $area = isset($_GET['area']) ? sanitize_text_field($_GET['area']) : '';
-
-    $current_page = isset( $_GET['page'] ) ? absint( $_GET['page'] ) : 1;*/
 
     // Sanitize attributes for safe output
     $title = esc_html($atts['title']);
@@ -106,12 +112,21 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
 
     // Start output buffering to capture HTML
     ob_start();
-  ?>
+    ?>
     <script type="text/javascript">
         jQuery(document).ready(($)=>init_document($));
     </script>
     <!--<div style="border: 1px solid #ccc; padding: 15px; margin: 15px 0; background-color: #f9f9f9; border-radius: 8px;">-->
-    <div class="modern-table-container">    
+        <div class="leaderboard-legend">
+            <strong>Legend:</strong>
+            <span class="legend-item">Serie A: <span class="legend-badge badge-a">A</span> Achieved President Distinguished Last Year Or This Year</span>
+            <span class="legend-item">Serie B: <span class="legend-badge badge-b">B</span> Achieved Select Distinguished Last Year Or This Year</span>
+            <span class="legend-item">Serie C: <span class="legend-badge badge-c">C</span> Achieved Distinguished Last Year Or This Year</span>
+            <span class="legend-item">Serie D: <span class="legend-badge badge-d">D</span> No Distinguished Status Neither Last Year Nor This Year</span>
+            <span class="legend-group">DCP Eligible: <span class="legend-icon">😎</span>  (eligible) &nbsp; <span class="legend-icon">☹️</span> (not eligible)</span>
+            <span class="legend-group">CSP Submitted: <span class="legend-icon">✅</span>  (submitted before deadline) &nbsp; <span class="legend-icon">🚫</span> (not submitted or submitted after deadline)</span>
+        </div>
+    <div class="modern-table-container">
         <div class="custom-table-filter">
             <div class="filter-block">
                 <label for="categoryFilter">Category:</label>
@@ -138,23 +153,9 @@ function districtleaderboard_content_shortcode_callback($atts, $content = null) 
         </div>
         <h3 style="color: <?php echo $color; ?>;"><?php echo $title; ?></h3>
         <table id="club_leaderboard">
-            <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>Division</th>
-                    <th>Area</th>
-                    <th>Club</th>
-                    <th>District Points</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>DCP Eligible</th>
-                    <th>View Goals</th>
-                </tr>
-            </thead>
         </table>
     </div>
     <?php
-    // Return the buffered content
-    return ob_get_clean();
-}
-
+        // Return the buffered content
+            return ob_get_clean();
+    }
