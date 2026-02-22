@@ -102,6 +102,16 @@ function init_document($) {
   });
 
   var table = $("#club_leaderboard").DataTable({
+    fixedHeader: (function () {
+      try {
+        var isMobile = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+        if (isMobile) return { header: true, headerOffset: 0 };
+        var h = $(".top-controls").outerHeight() || 56;
+        return { header: true, headerOffset: h };
+      } catch (e) {
+        return true;
+      }
+    })(),
     searching: true,
     processing: true,
     serverSide: false,

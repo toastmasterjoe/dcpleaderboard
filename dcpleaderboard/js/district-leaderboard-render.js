@@ -70,6 +70,58 @@ function district_table_draw($, table) {
   });
 }
 
+function responsive_column_render($, api, rowIdx, columns) {
+  let html = $('<ul class="dtr-details"></ul>');
+  let rowData = api.row(rowIdx).data();
+  columns.forEach((col) => {
+    if (!col.hidden) return;
+    let colDef = api.settings()[0].aoColumns[col.columnIndex];
+    // 1. CUSTOM RENDERING ONLY FOR COLUMNS WITH TOOLTIP
+    if (colDef.tooltipText) {
+      let heading = colDef.title || th.text().trim();
+      // If column has a custom render function, use it
+      let value;
+      if (typeof colDef.render === "function") {
+        value = colDef.render(col.data, "display", rowData, {
+          row: rowIdx,
+          col: col.columnIndex,
+        });
+      } else {
+        value = col.data;
+      }
+      let li = $(
+        ` <li data-dt-column="${col.columnIndex}"> 
+            <span class="dtr-title">${heading}
+              <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="${colDef.tooltipText}"> ℹ️ </span> 
+            </span> 
+            <span class="dtr-data"> <div class="my-custom-wrapper">${value}</div> 
+            </span> 
+          </li> `,
+      );
+      html.append(li);
+      return;
+    }
+    // 2. DEFAULT RENDERING FOR ALL OTHER COLUMNS
+    let value = col.data;
+    // If the column has a custom render function, use it
+    if (typeof colDef.render === "function") {
+      value = colDef.render(col.data, "display", rowData, {
+        row: rowIdx,
+        col: col.columnIndex,
+      });
+    }
+    let li = $(
+      ` <li data-dt-column="${col.columnIndex}"> 
+          <span class="dtr-title">${col.title}</span> 
+          <span class="dtr-data">${value}</span> 
+        </li> 
+      `,
+    );
+    html.append(li);
+  });
+  return html.length ? html : false;
+}
+
 function render_goals($, clubId) {
   if (clubIdExpanded !== clubId) {
     return `<button class="expandgoals" data-club-id="${clubId}">Goals</button>`;
@@ -107,13 +159,14 @@ function render_goals($, clubId) {
       ],
       headerCallback: function (thead, data, start, end, display) {
         let api = this.api();
+
         api.columns().every(function () {
           let colIdx = this.index();
           let colDef = this.settings()[0].aoColumns[colIdx];
-          if (!colDef.tooltipText) return;
+          if (!colDef || !colDef.tooltipText) return;
           let th = $(thead).find("th").eq(colIdx); // Avoid duplicating icons on redraw
           if (th.find(".info-icon").length === 0) {
-            let title = th.text().trim();
+            let title = colDef.title || th.text().trim();
             th.html(
               ` <span class="header-with-icon"> ${title} <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="${colDef.tooltipText}"> ℹ️ </span> </span> `,
             );
@@ -172,6 +225,9 @@ function init_document($) {
     // fallback to 0 if controls not present yet
     fixedHeader: (function () {
       try {
+        var isMobile =
+          window.matchMedia && window.matchMedia("(max-width: 767px)").matches;
+        if (isMobile) return { header: true, headerOffset: 0 };
         var h = $(".top-controls").outerHeight() || 125;
         return { header: true, headerOffset: h };
       } catch (e) {
@@ -225,7 +281,8 @@ function init_document($) {
       },
       {
         title: "Category",
-        tooltipText: "Category based on last year's &amp; this year's DCP status. Refer to legend for details.",
+        tooltipText:
+          "Category based on last year's &amp; this year's DCP status. Refer to legend for details.",
         data: (row, type, set) => calculate_category(row).name,
         render: (data, type, row) => render_category(row),
       },
@@ -312,20 +369,29 @@ function init_document($) {
         render: (data, type, row) => render_goals($, row.id),
       },
     ],
+    responsive: {
+      details: {
+        renderer: (api,rowIdx, columns) => responsive_column_render($,api,rowIdx, columns),
+      },
+    },
     headerCallback: function (thead, data, start, end, display) {
       let api = this.api();
+      console.log(thead);
       api.columns().every(function () {
         let colIdx = this.index();
         let colDef = this.settings()[0].aoColumns[colIdx];
         if (!colDef.tooltipText) return;
+        if (!api.column(colIdx).visible()) return;
+        // Column is visible in the main table
         let th = $(thead).find("th").eq(colIdx); // Avoid duplicating icons on redraw
         if (th.find(".info-icon").length === 0) {
-          let title = th.text().trim();
+          let title = colDef.title || th.text().trim();
           th.html(
-            ` <span class="header-with-icon"> ${title} <span class="info-icon" 
-              data-bs-toggle="tooltip" 
-              data-bs-placement="top"
-              title="${colDef.tooltipText}"> ℹ️ </span> </span> `,
+            ` 
+              <span class="header-with-icon"> ${title} 
+                <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="${colDef.tooltipText}"> ℹ️ </span> 
+              </span> 
+            `,
           );
         }
       });

@@ -281,6 +281,19 @@ form input[type="submit"]:hover {
   margin-top: 20px;
 }
 
+/* On small screens, make controls non-sticky so they flow naturally */
+@media (max-width: 767px) {
+  .top-controls,
+  .bottom-controls {
+    position: static !important;
+    top: auto !important;
+    bottom: auto !important;
+    z-index: auto !important;
+    padding: 0.25rem 0 !important;
+    background: transparent !important;
+  }
+}
+
 .top-controls .dataTables_length,
 .top-controls .dataTables_filter {
   display: block;
