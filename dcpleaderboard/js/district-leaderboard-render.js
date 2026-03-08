@@ -363,6 +363,15 @@ function init_document($) {
         },
       },
       {
+        title: "DCP Goals:",
+        className: "none",
+        data: null,
+        render: (data, type, row) => {
+          const dcpGoals = row.goals_met;
+          return render_progress(dcpGoals, 10);
+        },
+      },
+      {
         title: "View",
         className: "none",
         data: null,

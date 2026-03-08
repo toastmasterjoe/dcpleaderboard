@@ -1,16 +1,16 @@
 {
   "name": "DCP Leaderboard",
   "slug": "dcpleaderboard",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "author": "Joseph Galea",
   "homepage": "https://github.com/toastmasterjoe/dcpleaderboard",
-  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.8.0/dcpleaderboard-2.8.0.zip",
+  "download_url": "https://github.com/toastmasterjoe/dcpleaderboard/releases/download/2.8.1/dcpleaderboard-2.8.1.zip",
   "requires": "6.6.1",
   "tested": "6.6.1",
   "last_updated": "2026-02-22",
   "sections": {
     "description": "Add DCP and Distric leaderboard to your site .",
-    "changelog": "###2.8.0 Bugfix on tooltip\n\n Bugfix on checking if rule was already evoked.\n\n New Ranking System  ###2.7.0\n *Added statistics, legend and tooltips*\n\n###2.6.3\n *Bug fix for updating date on ditrict points update*\n\n###2.6.2\n *Bug fix for multi award automatic rules not triggering*\n\n###2.6.1\n *Force Goals to show in child row*\n\n###2.6.0\n *District Leaderboard has table to show points received*\n\n###2.5.15\n *Added DCP eligibility column on district leaderboard*\n\n###2.5.14\n *Validate club retrieved succesfully*\n\n###2.5.11\n *Fixed ajax errors on admin triggers*\n\n###2.5.4\n *Fixed bug on plugin reinstall and code causing warnings*\n\n###2.5.1\n *Fixed bug in plugin install for non destructive upgrade*\n\n###2.5.0\n *Added admin interface to trigger manual rules*\n\n###2.4.18\n *Fixed progress bar bug*\n\n### 2.4.12\n*Updated total district goals*\n Bug fixes" 
+    "changelog": "###2.8.1Added dcp goals column on district leaderboard\n\n###2.8.0 Bugfix on tooltip\n\n Bugfix on checking if rule was already evoked.\n\n New Ranking System  ###2.7.0\n *Added statistics, legend and tooltips*\n\n###2.6.3\n *Bug fix for updating date on ditrict points update*\n\n###2.6.2\n *Bug fix for multi award automatic rules not triggering*\n\n###2.6.1\n *Force Goals to show in child row*\n\n###2.6.0\n *District Leaderboard has table to show points received*\n\n###2.5.15\n *Added DCP eligibility column on district leaderboard*\n\n###2.5.14\n *Validate club retrieved succesfully*\n\n###2.5.11\n *Fixed ajax errors on admin triggers*\n\n###2.5.4\n *Fixed bug on plugin reinstall and code causing warnings*\n\n###2.5.1\n *Fixed bug in plugin install for non destructive upgrade*\n\n###2.5.0\n *Added admin interface to trigger manual rules*\n\n###2.4.18\n *Fixed progress bar bug*\n\n### 2.4.12\n*Updated total district goals*\n Bug fixes" 
   }
 
 }
